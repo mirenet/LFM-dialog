@@ -2,7 +2,7 @@ package com.webhtml.app;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.graphics.LightingColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JsResult;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,17 +54,8 @@ public class DialogHelper {
             messageView.setPadding((int) (6 * density), (int) (20 * density), 0, (int) (32 * density));
             layout.addView(messageView);
 
-            Button closeButton = new Button(activity);
-            closeButton.setText("Close");
-            closeButton.setTextColor(Color.parseColor("#000000"));
-            closeButton.setTextSize(13.5f);
-            closeButton.setAllCaps(false);
-            closeButton.setTypeface(null, Typeface.BOLD);
-            
-            GradientDrawable btnBg = new GradientDrawable();
-            btnBg.setColor(Color.parseColor("#CBD868"));
-            btnBg.setCornerRadius(10 * density);
-            closeButton.setBackground(btnBg);
+            // Korišćenje TextView-a stilizovanog kao dugme sa fiksnim neprozirnim tekstom
+            TextView closeButton = createStyledButton(activity, "Close", "#000000", 13.5f, density);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     (int) (90 * density),
@@ -78,8 +68,6 @@ public class DialogHelper {
             buttonLayout.setPadding(0, (int) (12 * density), 0, 0);
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
-
-            applyButtonTouchEffect(closeButton, "#CBD868");
 
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setView(layout)
@@ -167,29 +155,9 @@ public class DialogHelper {
             inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
             layout.addView(input, inputParams);
 
-            Button saveButton = new Button(activity);
-            saveButton.setText("Save");
-            saveButton.setTextColor(Color.parseColor("#555555"));
-            saveButton.setTextSize(14);
-            saveButton.setAllCaps(false);
-            saveButton.setTypeface(null, Typeface.BOLD);
-
-            GradientDrawable saveBg = new GradientDrawable();
-            saveBg.setColor(Color.parseColor("#CBD868"));
-            saveBg.setCornerRadius(10 * density);
-            saveButton.setBackground(saveBg);
-
-            Button closeButton = new Button(activity);
-            closeButton.setText("Close");
-            closeButton.setTextColor(Color.parseColor("#555555"));
-            closeButton.setTextSize(14);
-            closeButton.setAllCaps(false);
-            closeButton.setTypeface(null, Typeface.BOLD);
-
-            GradientDrawable closeBg = new GradientDrawable();
-            closeBg.setColor(Color.parseColor("#CBD868"));
-            closeBg.setCornerRadius(10 * density);
-            closeButton.setBackground(closeBg);
+            // Tačna boja teksta #555555, tačna debljina i stil
+            TextView saveButton = createStyledButton(activity, "Save", "#555555", 14f, density);
+            TextView closeButton = createStyledButton(activity, "Close", "#555555", 14f, density);
 
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -209,9 +177,6 @@ public class DialogHelper {
             buttonLayout.addView(saveButton);
             buttonLayout.addView(closeButton);
             layout.addView(buttonLayout);
-
-            applyButtonTouchEffect(saveButton, "#CBD868");
-            applyButtonTouchEffect(closeButton, "#CBD868");
 
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setView(layout)
@@ -250,11 +215,32 @@ public class DialogHelper {
         });
     }
 
-    private static void applyButtonTouchEffect(Button button, String baseHexColor) {
+    /**
+     * Pomoćna metoda koja kreira TextView kao dugme sa:
+     * - Tačnom neprozirnom bojom teksta (bez ispranosti)
+     * - Fontom debljine 600 (Typeface.BOLD)
+     * - Tačnim CSS brightness(1.25) efektom posvetljivanja pri dodiru
+     */
+    private static TextView createStyledButton(Activity activity, String text, String textColorHex, float textSizeSp, float density) {
+        TextView button = new TextView(activity);
+        button.setText(text);
+        button.setTextColor(Color.parseColor(textColorHex));
+        button.setTextSize(textSizeSp);
+        button.setTypeface(null, Typeface.BOLD);
+        button.setGravity(Gravity.CENTER);
+        button.setIncludeFontPadding(false);
+
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.parseColor("#CBD868"));
+        bg.setCornerRadius(10 * density);
+        button.setBackground(bg);
+
+        // Simulacija CSS brightness(1.25) efekta posvetljivanja pri kliku
         button.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    v.getBackground().setColorFilter(Color.parseColor("#30FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+                    // Množenje RGB kanala sa svetlijim tonom da se dobije tačno posvetljivanje
+                    v.getBackground().setColorFilter(new LightingColorFilter(Color.WHITE, Color.argb(255, 40, 40, 20)));
                     v.invalidate();
                     break;
                 case MotionEvent.ACTION_UP:
@@ -263,8 +249,10 @@ public class DialogHelper {
                     v.invalidate();
                     break;
             }
-            return false;
+            return false; // Dozvoljava izvršavanje onClick listener-a
         });
+
+        return button;
     }
 
     public interface DownloadCallback {
