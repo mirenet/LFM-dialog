@@ -2,8 +2,10 @@ package com.webhtml.app;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JsResult;
@@ -13,6 +15,21 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 public class DialogHelper {
+
+private static void applyButtonTouchEffect(View button) {
+    button.setOnTouchListener((v, event) -> {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                v.setAlpha(0.8f); // simulacija hover/brightness filter efekta
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                v.setAlpha(1.0f);
+                break;
+        }
+        return false;
+    });
+}
 
 public static void showCustomAlert(Activity activity, String message, JsResult result) {
     activity.runOnUiThread(() -> {
@@ -63,19 +80,21 @@ public static void showCustomAlert(Activity activity, String message, JsResult r
         closeButton.setTextColor(Color.parseColor("#000000"));
         closeButton.setTextSize(13.5f);
         closeButton.setGravity(Gravity.CENTER);
-        closeButton.setTypeface(null, android.graphics.Typeface.BOLD);
+        closeButton.setTypeface(null, android.graphics.Typeface.NORMAL);
+        closeButton.getPaint().setFakeBoldText(true); // font-weight: 500
 
         GradientDrawable btnBg = new GradientDrawable();
         btnBg.setColor(Color.parseColor("#CBD868"));
         btnBg.setCornerRadius(10 * density);
         closeButton.setBackground(btnBg);
-        closeButton.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+        closeButton.setPadding(0, 0, 0, 0); // Uklonjen višak paddinga da visina bude kompaktna
 
         LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                 (int) (90 * density),
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                (int) (38 * density) // tačno definisana visina dugmeta iz primerenog HTML-a
         );
         closeButton.setLayoutParams(btnParams);
+        applyButtonTouchEffect(closeButton);
 
         LinearLayout buttonLayout = new LinearLayout(activity);
         buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -195,46 +214,52 @@ public static void showNativeDownloadDialog(Activity activity, String suggestedF
         rowParams.setMargins(0, 0, 0, 0);
         buttonLayout.setLayoutParams(rowParams);
 
+        // Dugme Save (boja teksta #555 i font-weight: 600)
         TextView saveButton = new TextView(activity);
         saveButton.setText("Save");
         saveButton.setTextColor(Color.parseColor("#555555"));
         saveButton.setTextSize(14);
         saveButton.setGravity(Gravity.CENTER);
-        saveButton.setTypeface(null, android.graphics.Typeface.BOLD);
+        saveButton.setTypeface(null, android.graphics.Typeface.NORMAL);
+        saveButton.getPaint().setFakeBoldText(true); // približava font-weight: 600
 
         GradientDrawable saveBg = new GradientDrawable();
         saveBg.setColor(Color.parseColor("#CBD868"));
         saveBg.setCornerRadius(10 * density);
         saveButton.setBackground(saveBg);
-        saveButton.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+        saveButton.setPadding(0, 0, 0, 0);
 
+        // Dugme Close (boja teksta #555 i font-weight: 600)
         TextView closeButton = new TextView(activity);
         closeButton.setText("Close");
         closeButton.setTextColor(Color.parseColor("#555555"));
         closeButton.setTextSize(14);
         closeButton.setGravity(Gravity.CENTER);
-        closeButton.setTypeface(null, android.graphics.Typeface.BOLD);
+        closeButton.setTypeface(null, android.graphics.Typeface.NORMAL);
+        closeButton.getPaint().setFakeBoldText(true);
 
         GradientDrawable closeBg = new GradientDrawable();
         closeBg.setColor(Color.parseColor("#CBD868"));
         closeBg.setCornerRadius(10 * density);
         closeButton.setBackground(closeBg);
-        closeButton.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+        closeButton.setPadding(0, 0, 0, 0);
 
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+        LinearLayout.LayoutParams saveParams = new LinearLayout.LayoutParams(
+                0,
+                (int) (38 * density) // prilagođena visina dugmeta
         );
-        btnParams.weight = 1;
-        btnParams.setMargins(0, 0, (int) (10 * density), 0);
-        saveButton.setLayoutParams(btnParams);
+        saveParams.weight = 1;
+        saveParams.setMargins(0, 0, (int) (10 * density), 0);
+        saveButton.setLayoutParams(saveParams);
+        applyButtonTouchEffect(saveButton);
 
         LinearLayout.LayoutParams closeParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                0,
+                (int) (38 * density) // prilagođena visina dugmeta
         );
         closeParams.weight = 1;
         closeButton.setLayoutParams(closeParams);
+        applyButtonTouchEffect(closeButton);
 
         buttonLayout.addView(saveButton);
         buttonLayout.addView(closeButton);
