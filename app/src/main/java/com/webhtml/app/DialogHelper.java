@@ -1,11 +1,10 @@
 package com.webhtml.app;
 
 import android.app.Activity;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,276 +18,256 @@ import androidx.appcompat.app.AlertDialog;
 
 public class DialogHelper {
 
-private static void applyButtonTouchEffect(View button) {
-    button.setOnTouchListener((v, event) -> {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // Efekat osvetljavanja (prikazuje svetliji sloj preko dugmeta)
-                v.getBackground().setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.SRC_ATOP);
-                v.invalidate();
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                v.getBackground().clearColorFilter();
-                v.invalidate();
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    v.performClick();
-                }
-                break;
-        }
-        return true;
-    });
-}
+    public static void showCustomAlert(Activity activity, String message, JsResult result) {
+        activity.runOnUiThread(() -> {
+            float density = activity.getResources().getDisplayMetrics().density;
 
-public static void showCustomAlert(Activity activity, String message, JsResult result) {
-    activity.runOnUiThread(() -> {
-        float density = activity.getResources().getDisplayMetrics().density;
+            LinearLayout layout = new LinearLayout(activity);
+            layout.setOrientation(LinearLayout.VERTICAL);
 
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
+            int padHorizontal = (int) (16 * density);
+            int padTop = (int) (14 * density);
+            int padBottom = (int) (12 * density);
 
-        int pad = (int) (12 * density);
-        layout.setPadding(pad, pad, pad, pad);
+            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
 
-        GradientDrawable backgroundDrawable = new GradientDrawable();
-        backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
-        backgroundDrawable.setCornerRadius(10 * density);
-        backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
-        layout.setBackground(backgroundDrawable);
+            GradientDrawable backgroundDrawable = new GradientDrawable();
+            backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
+            backgroundDrawable.setCornerRadius(10 * density);
+            backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
+            layout.setBackground(backgroundDrawable);
 
-        TextView titleView = new TextView(activity);
-        titleView.setText("Alert!");
-        titleView.setTextColor(Color.parseColor("#CBD868"));
-        titleView.setTextSize(16);
-        titleView.setTypeface(null, android.graphics.Typeface.BOLD);
-        titleView.setGravity(Gravity.CENTER);
-        titleView.setPadding(0, (int) (3 * density), 0, (int) (16 * density));
-        layout.addView(titleView);
+            TextView titleView = new TextView(activity);
+            titleView.setText("Alert!");
+            titleView.setTextColor(Color.parseColor("#CBD868"));
+            titleView.setTextSize(16);
+            titleView.setTypeface(null, Typeface.BOLD);
+            titleView.setGravity(Gravity.CENTER);
+            titleView.setPadding(0, (int) (3 * density), 0, (int) (16 * density));
+            layout.addView(titleView);
 
-        TextView messageView = new TextView(activity);
-        messageView.setText(message);
-        messageView.setTextColor(Color.parseColor("#BAB9BF"));
-        messageView.setTextSize(15);
-        messageView.setGravity(Gravity.START);
-        messageView.setLineSpacing(0, 1.4f);
-        messageView.setPadding((int) (6 * density), (int) (20 * density), 0, (int) (32 * density));
-        layout.addView(messageView);
+            TextView messageView = new TextView(activity);
+            messageView.setText(message);
+            messageView.setTextColor(Color.parseColor("#BAB9BF"));
+            messageView.setTextSize(15);
+            messageView.setLineSpacing(0, 1.4f);
+            messageView.setGravity(Gravity.START);
+            messageView.setPadding((int) (6 * density), (int) (20 * density), 0, (int) (32 * density));
+            layout.addView(messageView);
 
-        LinearLayout buttonLayout = new LinearLayout(activity);
-        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-        buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
-        buttonLayout.setPadding(0, (int) (12 * density), 0, 0);
+            Button closeButton = new Button(activity);
+            closeButton.setText("Close");
+            closeButton.setTextColor(Color.parseColor("#000000"));
+            closeButton.setTextSize(13.5f);
+            closeButton.setAllCaps(false);
+            closeButton.setTypeface(null, Typeface.BOLD);
+            
+            GradientDrawable btnBg = new GradientDrawable();
+            btnBg.setColor(Color.parseColor("#CBD868"));
+            btnBg.setCornerRadius(10 * density);
+            closeButton.setBackground(btnBg);
 
-        Button closeButton = new Button(activity);
-        closeButton.setText("Close");
-        closeButton.setTextColor(Color.parseColor("#000000"));
-        closeButton.setTextSize(13.5f);
-        closeButton.setGravity(Gravity.CENTER);
-        closeButton.setTypeface(null, android.graphics.Typeface.BOLD);
-        closeButton.setAllCaps(false);
+            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
+                    (int) (90 * density),
+                    (int) (38 * density)
+            );
 
-        GradientDrawable btnBg = new GradientDrawable();
-        btnBg.setColor(Color.parseColor("#CBD868"));
-        btnBg.setCornerRadius(10 * density);
-        closeButton.setBackground(btnBg);
+            LinearLayout buttonLayout = new LinearLayout(activity);
+            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+            buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+            buttonLayout.setPadding(0, (int) (12 * density), 0, 0);
+            buttonLayout.addView(closeButton, btnParams);
+            layout.addView(buttonLayout);
 
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                (int) (90 * density),
-                (int) (38 * density)
-        );
-        closeButton.setLayoutParams(btnParams);
-        closeButton.setPadding(0, 0, 0, 0);
-        
-        applyButtonTouchEffect(closeButton);
+            applyButtonTouchEffect(closeButton, "#CBD868");
 
-        buttonLayout.addView(closeButton);
-        layout.addView(buttonLayout);
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setView(layout)
+                    .setCancelable(false)
+                    .create();
 
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setView(layout)
-                .setCancelable(false)
-                .create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
-
-        closeButton.setOnClickListener(v -> {
-            result.confirm();
-            dialog.dismiss();
-        });
-
-        dialog.show();
-
-        if (dialog.getWindow() != null) {
-            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-            params.dimAmount = 0.08f;
-            dialog.getWindow().setAttributes(params);
-        }
-
-        if (dialog.getWindow() != null) {
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(dialog.getWindow().getAttributes());
-            int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-            lp.width = screenWidth - (int) (100 * density);
-            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            dialog.getWindow().setAttributes(lp);
-        }
-    });
-}
-
-public static void showNativeDownloadDialog(Activity activity, String suggestedFileName, String url, String mimetype, boolean isBlob, DownloadCallback callback) {
-    activity.runOnUiThread(() -> {
-        float density = activity.getResources().getDisplayMetrics().density;
-
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        int pad = (int) (14 * density);
-        layout.setPadding(pad, pad, pad, pad);
-
-        GradientDrawable backgroundDrawable = new GradientDrawable();
-        backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
-        backgroundDrawable.setCornerRadius(10 * density);
-        backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
-        layout.setBackground(backgroundDrawable);
-
-        TextView titleView = new TextView(activity);
-        titleView.setText("Save File");
-        titleView.setTextColor(Color.parseColor("#CBD868"));
-        titleView.setTextSize(16);
-        titleView.setTypeface(null, android.graphics.Typeface.BOLD);
-        titleView.setGravity(Gravity.CENTER);
-        titleView.setPadding(0, 0, 0, (int) (16 * density));
-        layout.addView(titleView);
-
-        TextView labelView = new TextView(activity);
-        labelView.setText("File Name:");
-        labelView.setTextColor(Color.parseColor("#DADADA"));
-        labelView.setTextSize(14);
-        labelView.setPadding((int) (6 * density), 0, 0, (int) (1 * density));
-        layout.addView(labelView);
-
-        final EditText input = new EditText(activity);
-        input.setText(suggestedFileName);
-        input.setTextSize(14);
-        input.setTextColor(Color.parseColor("#9E9DA4"));
-        input.setSingleLine(true);
-        input.setPadding((int) (8 * density), (int) (10 * density), (int) (8 * density), (int) (10 * density));
-        
-        GradientDrawable inputBg = new GradientDrawable();
-        inputBg.setColor(Color.parseColor("#1A1A1A"));
-        inputBg.setCornerRadius(10 * density);
-        inputBg.setStroke((int) (0.8f * density), Color.parseColor("#606060"));
-        input.setBackground(inputBg);
-
-        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
-        
-        LinearLayout inputContainer = new LinearLayout(activity);
-        inputContainer.setOrientation(LinearLayout.VERTICAL);
-        inputContainer.addView(input, inputParams);
-        layout.addView(inputContainer);
-
-        LinearLayout buttonLayout = new LinearLayout(activity);
-        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-        buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
-
-        Button saveButton = new Button(activity);
-        saveButton.setText("Save");
-        saveButton.setTextColor(Color.parseColor("#555555"));
-        saveButton.setTextSize(14);
-        saveButton.setGravity(Gravity.CENTER);
-        saveButton.setTypeface(null, android.graphics.Typeface.BOLD);
-        saveButton.setAllCaps(false);
-
-        GradientDrawable saveBg = new GradientDrawable();
-        saveBg.setColor(Color.parseColor("#CBD868"));
-        saveBg.setCornerRadius(10 * density);
-        saveButton.setBackground(saveBg);
-
-        LinearLayout.LayoutParams saveParams = new LinearLayout.LayoutParams(
-                0,
-                (int) (38 * density),
-                1f
-        );
-        saveParams.setMargins(0, 0, (int) (10 * density), 0);
-        saveButton.setLayoutParams(saveParams);
-        saveButton.setPadding(0, 0, 0, 0);
-        applyButtonTouchEffect(saveButton);
-
-        Button closeButton = new Button(activity);
-        closeButton.setText("Close");
-        closeButton.setTextColor(Color.parseColor("#555555"));
-        closeButton.setTextSize(14);
-        closeButton.setGravity(Gravity.CENTER);
-        closeButton.setTypeface(null, android.graphics.Typeface.BOLD);
-        closeButton.setAllCaps(false);
-
-        GradientDrawable closeBg = new GradientDrawable();
-        closeBg.setColor(Color.parseColor("#CBD868"));
-        closeBg.setCornerRadius(10 * density);
-        closeButton.setBackground(closeBg);
-
-        LinearLayout.LayoutParams closeParams = new LinearLayout.LayoutParams(
-                0,
-                (int) (38 * density),
-                1f
-        );
-        closeButton.setLayoutParams(closeParams);
-        closeButton.setPadding(0, 0, 0, 0);
-        applyButtonTouchEffect(closeButton);
-
-
-ButtonLayout.addView(saveButton);
-buttonLayout.addView(closeButton);
-layout.addView(buttonLayout);
-
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setView(layout)
-                .setCancelable(false)
-                .create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
-
-        closeButton.setOnClickListener(v -> dialog.dismiss());
-
-        saveButton.setOnClickListener(v -> {
-            String finalName = input.getText().toString().trim();
-            if (finalName.isEmpty()) {
-                finalName = suggestedFileName;
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             }
-            callback.onSave(finalName);
-            dialog.dismiss();
+
+            closeButton.setOnClickListener(v -> {
+                result.confirm();
+                dialog.dismiss();
+            });
+
+            dialog.show();
+
+            if (dialog.getWindow() != null) {
+                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+                params.dimAmount = 0.08f;
+                dialog.getWindow().setAttributes(params);
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                lp.width = screenWidth - (int) (100 * density);
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setAttributes(lp);
+            }
         });
+    }
 
-        dialog.show();
+    public static void showNativeDownloadDialog(Activity activity, String suggestedFileName, String url, String mimetype, boolean isBlob, DownloadCallback callback) {
+        activity.runOnUiThread(() -> {
+            float density = activity.getResources().getDisplayMetrics().density;
 
-        if (dialog.getWindow() != null) {
-            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-            params.dimAmount = 0.08f;
-            dialog.getWindow().setAttributes(params);
-        }
+            LinearLayout layout = new LinearLayout(activity);
+            layout.setOrientation(LinearLayout.VERTICAL);
 
-        if (dialog.getWindow() != null) {
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(dialog.getWindow().getAttributes());
-            int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-            lp.width = screenWidth - (int) (80 * density);
-            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            dialog.getWindow().setAttributes(lp);
-        }
-    });
-}
+            int padHorizontal = (int) (14 * density);
+            int padTop = (int) (14 * density);
+            int padBottom = (int) (14 * density);
 
-public interface DownloadCallback {
-    void onSave(String fileName);
-}
+            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
 
+            GradientDrawable backgroundDrawable = new GradientDrawable();
+            backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
+            backgroundDrawable.setCornerRadius(10 * density);
+            backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
+            layout.setBackground(backgroundDrawable);
 
+            TextView titleView = new TextView(activity);
+            titleView.setText("Save File");
+            titleView.setTextColor(Color.parseColor("#CBD868"));
+            titleView.setTextSize(16);
+            titleView.setTypeface(null, Typeface.BOLD);
+            titleView.setGravity(Gravity.CENTER);
+            titleView.setPadding(0, 0, 0, (int) (16 * density));
+            layout.addView(titleView);
+
+            TextView labelView = new TextView(activity);
+            labelView.setText("File Name:");
+            labelView.setTextColor(Color.parseColor("#DADADA"));
+            labelView.setTextSize(14);
+            labelView.setPadding((int) (6 * density), (int) (10 * density), 0, (int) (1 * density));
+            layout.addView(labelView);
+
+            final EditText input = new EditText(activity);
+            input.setText(suggestedFileName);
+            input.setTextSize(14);
+            input.setTextColor(Color.parseColor("#9E9DA4"));
+            input.setSingleLine(true);
+            input.setPadding((int) (8 * density), (int) (10 * density), (int) (8 * density), (int) (10 * density));
+            
+            GradientDrawable inputBg = new GradientDrawable();
+            inputBg.setColor(Color.parseColor("#1A1A1A"));
+            inputBg.setCornerRadius(10 * density);
+            inputBg.setStroke((int) (0.8f * density), Color.parseColor("#606060"));
+            input.setBackground(inputBg);
+
+            LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
+            layout.addView(input, inputParams);
+
+            Button saveButton = new Button(activity);
+            saveButton.setText("Save");
+            saveButton.setTextColor(Color.parseColor("#555555"));
+            saveButton.setTextSize(14);
+            saveButton.setAllCaps(false);
+            saveButton.setTypeface(null, Typeface.BOLD);
+
+            GradientDrawable saveBg = new GradientDrawable();
+            saveBg.setColor(Color.parseColor("#CBD868"));
+            saveBg.setCornerRadius(10 * density);
+            saveButton.setBackground(saveBg);
+
+            Button closeButton = new Button(activity);
+            closeButton.setText("Close");
+            closeButton.setTextColor(Color.parseColor("#555555"));
+            closeButton.setTextSize(14);
+            closeButton.setAllCaps(false);
+            closeButton.setTypeface(null, Typeface.BOLD);
+
+            GradientDrawable closeBg = new GradientDrawable();
+            closeBg.setColor(Color.parseColor("#CBD868"));
+            closeBg.setCornerRadius(10 * density);
+            closeButton.setBackground(closeBg);
+
+            LinearLayout buttonLayout = new LinearLayout(activity);
+            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+            buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+            buttonLayout.setPadding(0, 0, 0, 0);
+
+            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    (int) (38 * density)
+            );
+            btnParams.weight = 1;
+            btnParams.setMargins(0, 0, (int) (8 * density), 0);
+
+            saveButton.setLayoutParams(btnParams);
+            closeButton.setLayoutParams(btnParams);
+
+            buttonLayout.addView(saveButton);
+            buttonLayout.addView(closeButton);
+            layout.addView(buttonLayout);
+
+            applyButtonTouchEffect(saveButton, "#CBD868");
+            applyButtonTouchEffect(closeButton, "#CBD868");
+
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setView(layout)
+                    .setCancelable(false)
+                    .create();
+
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+
+            closeButton.setOnClickListener(v -> dialog.dismiss());
+
+            saveButton.setOnClickListener(v -> {
+                String finalName = input.getText().toString().trim();
+                if (finalName.isEmpty()) {
+                    finalName = suggestedFileName;
+                }
+                callback.onSave(finalName);
+                dialog.dismiss();
+            });
+
+            dialog.show();
+
+            if (dialog.getWindow() != null) {
+                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+                params.dimAmount = 0.08f;
+                dialog.getWindow().setAttributes(params);
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                lp.width = screenWidth - (int) (80 * density);
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setAttributes(lp);
+            }
+        });
+    }
+
+    private static void applyButtonTouchEffect(Button button, String baseHexColor) {
+        button.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.getBackground().setColorFilter(Color.parseColor("#30FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+                    v.invalidate();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.getBackground().clearColorFilter();
+                    v.invalidate();
+                    break;
+            }
+            return false;
+        });
+    }
+
+    public interface DownloadCallback {
+        void onSave(String fileName);
+    }
 }
