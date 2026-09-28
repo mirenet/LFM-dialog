@@ -54,7 +54,6 @@ public class DialogHelper {
             messageView.setPadding((int) (6 * density), (int) (20 * density), 0, (int) (32 * density));
             layout.addView(messageView);
 
-            // Korišćenje TextView-a stilizovanog kao dugme sa fiksnim neprozirnim tekstom
             TextView closeButton = createStyledButton(activity, "Close", "#000000", 13.5f, density);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
@@ -155,9 +154,9 @@ public class DialogHelper {
             inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
             layout.addView(input, inputParams);
 
-            // Tačna boja teksta #555555, tačna debljina i stil
-            TextView saveButton = createStyledButton(activity, "Save", "#555555", 14f, density);
-            TextView closeButton = createStyledButton(activity, "Close", "#555555", 14f, density);
+            // Korišćenje oštrijeg, punog kontrasta za tekst na dugmiću
+            TextView saveButton = createStyledButton(activity, "Save", "#222222", 14f, density);
+            TextView closeButton = createStyledButton(activity, "Close", "#222222", 14f, density);
 
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -215,31 +214,26 @@ public class DialogHelper {
         });
     }
 
-    /**
-     * Pomoćna metoda koja kreira TextView kao dugme sa:
-     * - Tačnom neprozirnom bojom teksta (bez ispranosti)
-     * - Fontom debljine 600 (Typeface.BOLD)
-     * - Tačnim CSS brightness(1.25) efektom posvetljivanja pri dodiru
-     */
     private static TextView createStyledButton(Activity activity, String text, String textColorHex, float textSizeSp, float density) {
         TextView button = new TextView(activity);
         button.setText(text);
         button.setTextColor(Color.parseColor(textColorHex));
         button.setTextSize(textSizeSp);
-        button.setTypeface(null, Typeface.BOLD);
+        // Uklonjen veštački BOLD koji je razlivao i bledo prikazivao slova na Androidu
+        button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         button.setGravity(Gravity.CENTER);
         button.setIncludeFontPadding(false);
+        button.getPaint().setSubpixelText(true);
 
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.parseColor("#CBD868"));
         bg.setCornerRadius(10 * density);
         button.setBackground(bg);
 
-        // Simulacija CSS brightness(1.25) efekta posvetljivanja pri kliku
+        // Već potvrđeni tačni brightness efekat pri dodiru
         button.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    // Množenje RGB kanala sa svetlijim tonom da se dobije tačno posvetljivanje
                     v.getBackground().setColorFilter(new LightingColorFilter(Color.WHITE, Color.argb(255, 40, 40, 20)));
                     v.invalidate();
                     break;
@@ -249,7 +243,7 @@ public class DialogHelper {
                     v.invalidate();
                     break;
             }
-            return false; // Dozvoljava izvršavanje onClick listener-a
+            return false;
         });
 
         return button;
