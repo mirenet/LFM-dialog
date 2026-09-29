@@ -167,8 +167,8 @@ public class DialogHelper {
             inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
             layout.addView(input, inputParams);
 
-            TextView saveButton = createStyledButton(activity, "Save", "#111111", 13.5f, density);
-            TextView closeButton = createStyledButton(activity, "Close", "#111111", 13.5f, density);
+            TextView saveButton = createStyledButton(activity, "Save", "#333333", 13.5f, density);
+            TextView closeButton = createStyledButton(activity, "Close", "#333333", 13.5f, density);
 
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
