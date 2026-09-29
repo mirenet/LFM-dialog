@@ -89,23 +89,42 @@ public class DialogHelper {
                 dialog.dismiss();
             });
 
-            dialog.show();
-
+            // Postavljamo širinu i dimenzije PRE prikaza da ne bi bilo trzaja sa strane
             if (dialog.getWindow() != null) {
                 WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f; 
+                params.dimAmount = 0.5f;
+                params.gravity = Gravity.CENTER;
+                int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
+                if (currentWindowWidth <= 0) {
+                    currentWindowWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                }
+                params.width = Math.max((int) (250 * density), currentWindowWidth - (int) (80 * density));
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 dialog.getWindow().setAttributes(params);
-
-                View decorView = dialog.getWindow().getDecorView();
-                decorView.post(() -> {
-                    int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog.getWindow().getAttributes());
-                    lp.width = Math.max((int) (250 * density), currentWindowWidth - (int) (80 * density));
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog.getWindow().setAttributes(lp);
-                });
             }
+
+            dialog.show();
+
+            // Slušamo promene veličine prozora aplikacije (kada se menja popup view) u realnom vremenu
+            View.OnLayoutChangeListener resizeListener = new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (dialog.isShowing() && dialog.getWindow() != null) {
+                        int newWidth = right - left;
+                        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+                        lp.width = Math.max((int) (250 * density), newWidth - (int) (80 * density));
+                        dialog.getWindow().setAttributes(lp);
+                    }
+                }
+            };
+
+            View appDecorView = activity.getWindow().getDecorView();
+            appDecorView.addOnLayoutChangeListener(resizeListener);
+
+            dialog.setOnDismissListener(dialogInterface -> {
+                appDecorView.removeOnLayoutChangeListener(resizeListener);
+            });
         });
     }
 
@@ -217,6 +236,20 @@ public class DialogHelper {
                 dialog.dismiss();
             });
 
+            // Postavljamo širinu i dimenzije PRE prikaza da ne bi bilo trzaja
+            if (dialog.getWindow() != null) {
+                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+                params.dimAmount = 0.5f;
+                params.gravity = Gravity.CENTER;
+                int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
+                if (currentWindowWidth <= 0) {
+                    currentWindowWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                }
+                params.width = Math.max((int) (250 * density), currentWindowWidth - (int) (60 * density));
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setAttributes(params);
+            }
+
             dialog.show();
 
             input.clearFocus();
@@ -248,21 +281,26 @@ public class DialogHelper {
                 });
             }
 
-            if (dialog.getWindow() != null) {
-                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f;
-                dialog.getWindow().setAttributes(params);
+            // Slušamo promene veličine prozora aplikacije u popup view-u u realnom vremenu
+            View.OnLayoutChangeListener resizeListener = new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (dialog.isShowing() && dialog.getWindow() != null) {
+                        int newWidth = right - left;
+                        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+                        lp.width = Math.max((int) (250 * density), newWidth - (int) (60 * density));
+                        dialog.getWindow().setAttributes(lp);
+                    }
+                }
+            };
 
-                View decorView = dialog.getWindow().getDecorView();
-                decorView.post(() -> {
-                    int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog.getWindow().getAttributes());
-                    lp.width = Math.max((int) (250 * density), currentWindowWidth - (int) (60 * density));
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog.getWindow().setAttributes(lp);
-                });
-            }
+            View appDecorView = activity.getWindow().getDecorView();
+            appDecorView.addOnLayoutChangeListener(resizeListener);
+
+            dialog.setOnDismissListener(dialogInterface -> {
+                appDecorView.removeOnLayoutChangeListener(resizeListener);
+            });
         });
     }
 
