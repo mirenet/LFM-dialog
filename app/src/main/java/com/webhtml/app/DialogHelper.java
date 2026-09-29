@@ -154,7 +154,7 @@ public class DialogHelper {
             labelView.setIncludeFontPadding(false);
 
             // PADDING IZNAD I ISPOD "File Name" labele
-            labelView.setPadding((int) (6 * density), (int) (5 * density), 0, (int) (1 * density));
+            labelView.setPadding((int) (7 * density), (int) (5 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
             final EditText input = new EditText(activity);
@@ -177,8 +177,8 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
             
-            // MARGINA ISPOD INPUT POLJA
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (14 * density));
+            // MARGINA IZNAD I ISPOD INPUT POLJA
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (15 * density));
             layout.addView(input, inputParams);
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
