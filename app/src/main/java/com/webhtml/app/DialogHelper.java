@@ -12,7 +12,6 @@ import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
@@ -82,7 +81,6 @@ public class DialogHelper {
 
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                // Uklonjena sistemska animacija otvaranja za trenutni prikaz (instant)
                 dialog.getWindow().setWindowAnimations(0);
             }
 
@@ -98,12 +96,17 @@ public class DialogHelper {
                 params.dimAmount = 0.5f; 
                 dialog.getWindow().setAttributes(params);
 
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
-                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                lp.width = screenWidth - (int) (100 * density);
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(lp);
+                // Dinamičko prilagođavanje širine prema trenutnoj širini prozora (radi savršeno u popup view-u)
+                View decorView = dialog.getWindow().getDecorView();
+                decorView.post(() -> {
+                    int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    // Zauzima 85% širine trenutnog prozora aplikacije (uz minimalnu i maksimalnu granicu)
+                    lp.width = Math.max((int) (250 * density), currentWindowWidth - (int) (80 * density));
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.getWindow().setAttributes(lp);
+                });
             }
         });
     }
@@ -115,7 +118,6 @@ public class DialogHelper {
             final LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
 
-            // Omogućavamo glavnom layout-u da preuzme fokus kada se klikne van input polja
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
@@ -154,7 +156,6 @@ public class DialogHelper {
             input.setSingleLine(true);
             input.setPadding((int) (8 * density), (int) (10 * density), (int) (8 * density), (int) (10 * density));
             
-            // Tanak sivi kursor
             setCursorColorAndWidth(input, Color.parseColor("#888888"), (int) (1.5f * density));
 
             GradientDrawable inputBg = new GradientDrawable();
@@ -169,6 +170,11 @@ public class DialogHelper {
             );
             inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
             layout.addView(input, inputParams);
+
+            input.setOnClickListener(v -> {
+                input.setFocusableInTouchMode(true);
+                input.requestFocus();
+            });
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 14f, density);
             TextView closeButton = createStyledButton(activity, "Close", "#222222", 14f, density);
@@ -199,7 +205,6 @@ public class DialogHelper {
 
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                // Uklonjena sistemska animacija za trenutni (instant) prikaz prozora
                 dialog.getWindow().setWindowAnimations(0);
             }
 
@@ -216,10 +221,9 @@ public class DialogHelper {
 
             dialog.show();
 
-            // Čim se prozor prikaže, skidamo početni fokus sa input polja da kursor ne svetli sam od sebe
             input.clearFocus();
+            input.setFocusableInTouchMode(false);
 
-            // Pouzdano gubljenje fokusa i skrivanje kursora/tastature pri kliku bilo gde van input polja
             if (dialog.getWindow() != null) {
                 View decorView = dialog.getWindow().getDecorView();
                 decorView.setOnTouchListener((v, event) -> {
@@ -230,11 +234,11 @@ public class DialogHelper {
                             focusedView.getLocationOnScreen(location);
                             float x = event.getRawX();
                             float y = event.getRawY();
-                            // Ako je kliknuto van granica EditText-a
                             if (x < location[0] || x > (location[0] + focusedView.getWidth()) ||
                                     y < location[1] || y > (location[1] + focusedView.getHeight())) {
                                 focusedView.clearFocus();
-                                layout.requestFocus(); // Glavni layout preuzima fokus i gasi kursor
+                                input.setFocusableInTouchMode(false);
+                                layout.requestFocus();
                                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                                 if (imm != null) {
                                     imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
@@ -251,19 +255,20 @@ public class DialogHelper {
                 params.dimAmount = 0.5f;
                 dialog.getWindow().setAttributes(params);
 
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
-                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                lp.width = screenWidth - (int) (80 * density);
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(lp);
+                // Dinamičko prilagođavanje širine prema trenutnoj širini prozora aplikacije u popup view-u
+                View decorView = dialog.getWindow().getDecorView();
+                decorView.post(() -> {
+                    int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    lp.width = Math.max((int) (250 * density), currentWindowWidth - (int) (60 * density));
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.getWindow().setAttributes(lp);
+                });
             }
         });
     }
 
-    /**
-     * Kreira dugme sa originalnim LightingColorFilter hover efektom
-     */
     private static TextView createStyledButton(Activity activity, String text, String textColorHex, float textSizeSp, float density) {
         TextView button = new TextView(activity);
         button.setText(text);
@@ -297,9 +302,6 @@ public class DialogHelper {
         return button;
     }
 
-    /**
-     * Postavlja tanak, elegantan sivi kursor u EditText polje
-     */
     private static void setCursorColorAndWidth(EditText editText, int color, int widthPx) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -320,7 +322,7 @@ public class DialogHelper {
                     drawable.setColor(color);
                     drawable.setSize(widthPx, editText.getLineHeight());
                     ((android.graphics.drawable.Drawable[]) drawables)[0] = drawable;
-                    ((android.graphics.drawable.Drawable[]) drawables)[1] = drawable;
+                    ((android.graphics.Dialog.Drawable[]) drawables)[1] = drawable;
                 }
             }
         } catch (Exception ignored) {}
