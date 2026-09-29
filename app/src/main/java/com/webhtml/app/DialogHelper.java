@@ -12,13 +12,14 @@ import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
 import java.lang.reflect.Field;
 
 public class DialogHelper {
@@ -26,6 +27,12 @@ public class DialogHelper {
     public static void showCustomAlert(Activity activity, String message, JsResult result) {
         activity.runOnUiThread(() -> {
             float density = activity.getResources().getDisplayMetrics().density;
+
+            // Glavni kontejner preko celog ekrana (zatamnjenje pozadine)
+            final FrameLayout overlayContainer = new FrameLayout(activity);
+            overlayContainer.setBackgroundColor(Color.parseColor("#80000000")); // 50% tamno
+            overlayContainer.setClickable(true);
+            overlayContainer.setFocusable(true);
 
             LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
@@ -74,37 +81,29 @@ public class DialogHelper {
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
 
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setView(layout)
-                    .setCancelable(false)
-                    .create();
+            // Centriramo prozor unutar overlay-a sa zadatim marginama
+            int marginHorizontal = (int) (40 * density);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.gravity = Gravity.CENTER;
+            params.leftMargin = marginHorizontal;
+            params.rightMargin = marginHorizontal;
 
-            if (dialog.getWindow() != null) {
-                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                dialog.getWindow().setWindowAnimations(0);
-            }
+            overlayContainer.addView(layout, params);
+
+            // Dodajemo direktno u root aktivnosti (drži se unutar granica tvog prozora/webview-a)
+            ViewGroup rootLayout = activity.findViewById(android.R.id.content);
+            rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            ));
 
             closeButton.setOnClickListener(v -> {
                 result.confirm();
-                dialog.dismiss();
+                rootLayout.removeView(overlayContainer);
             });
-
-            dialog.show();
-
-            // Postavljanje širine jednom pri otvaranju (stabilno, bez ikakvih listenera i rušenja)
-            if (dialog.getWindow() != null) {
-                int currentWidth = activity.getWindow().getDecorView().getWidth();
-                if (currentWidth <= 0) {
-                    currentWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                }
-                int targetWidth = currentWidth - (int) (100 * density);
-
-                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f;
-                params.width = Math.max((int) (150 * density), Math.min(targetWidth, currentWidth - (int) (20 * density)));
-                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(params);
-            }
         });
     }
 
@@ -112,9 +111,13 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
             float density = activity.getResources().getDisplayMetrics().density;
 
+            final FrameLayout overlayContainer = new FrameLayout(activity);
+            overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
+            overlayContainer.setClickable(true);
+            overlayContainer.setFocusable(true);
+
             final LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
-
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
@@ -190,17 +193,24 @@ public class DialogHelper {
             buttonLayout.addView(closeButton);
             layout.addView(buttonLayout);
 
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setView(layout)
-                    .setCancelable(false)
-                    .create();
+            int marginHorizontal = (int) (30 * density);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.gravity = Gravity.CENTER;
+            params.leftMargin = marginHorizontal;
+            params.rightMargin = marginHorizontal;
 
-            if (dialog.getWindow() != null) {
-                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                dialog.getWindow().setWindowAnimations(0);
-            }
+            overlayContainer.addView(layout, params);
 
-            closeButton.setOnClickListener(v -> dialog.dismiss());
+            ViewGroup rootLayout = activity.findViewById(android.R.id.content);
+            rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            ));
+
+            closeButton.setOnClickListener(v -> rootLayout.removeView(overlayContainer));
 
             saveButton.setOnClickListener(v -> {
                 String finalName = input.getText().toString().trim();
@@ -208,52 +218,8 @@ public class DialogHelper {
                     finalName = suggestedFileName;
                 }
                 callback.onSave(finalName);
-                dialog.dismiss();
+                rootLayout.removeView(overlayContainer);
             });
-
-            dialog.show();
-
-            input.clearFocus();
-
-            if (dialog.getWindow() != null) {
-                View decorView = dialog.getWindow().getDecorView();
-                decorView.setOnTouchListener((v, event) -> {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        View focusedView = activity.getCurrentFocus();
-                        if (focusedView instanceof EditText) {
-                            int[] location = new int[2];
-                            focusedView.getLocationOnScreen(location);
-                            float x = event.getRawX();
-                            float y = event.getRawY();
-                            if (x < location[0] || x > (location[0] + focusedView.getWidth()) ||
-                                    y < location[1] || y > (location[1] + focusedView.getHeight())) {
-                                focusedView.clearFocus();
-                                layout.requestFocus();
-                                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                if (imm != null) {
-                                    imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
-                                }
-                            }
-                        }
-                    }
-                    return false;
-                });
-            }
-
-            // Postavljanje širine jednom pri otvaranju za download dijalog
-            if (dialog.getWindow() != null) {
-                int currentWidth = activity.getWindow().getDecorView().getWidth();
-                if (currentWidth <= 0) {
-                    currentWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                }
-                int targetWidth = currentWidth - (int) (80 * density);
-
-                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f;
-                params.width = Math.max((int) (150 * density), Math.min(targetWidth, currentWidth - (int) (20 * density)));
-                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(params);
-            }
         });
     }
 
