@@ -116,8 +116,8 @@ public class DialogHelper {
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
-            // Vraćen vertikalni padding na prethodnu meru, horizontalni ostaje usklađen
-            int padVertical = (int) (16.5f * density);
+            // Blago smanjen vertikalni padding (sa 16.5f na 15f) da se kompenzuje pomeranje
+            int padVertical = (int) (15f * density);
             int padHorizontal = (int) (14 * density);
             layout.setPadding(padHorizontal, padVertical, padHorizontal, padVertical);
 
@@ -164,7 +164,8 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
+            // Smanjena donja margina input polja sa 11dp na 8dp (oslobođeno tačno 3px/dp)
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (8 * density));
             layout.addView(input, inputParams);
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
@@ -173,7 +174,9 @@ public class DialogHelper {
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
-            buttonLayout.setPadding(0, 0, 0, 0);
+            
+            // Mali gornji padding od 3 piksela iznad dugmadi koji gura sve nagore
+            buttonLayout.setPadding(0, (int) (3 * density), 0, 0);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     0,
@@ -197,7 +200,6 @@ public class DialogHelper {
 
             input.clearFocus();
 
-            // Smanjene bočne margine za dodatnih 6px ukupne širine dijaloga
             int marginHorizontal = (int) (25 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
