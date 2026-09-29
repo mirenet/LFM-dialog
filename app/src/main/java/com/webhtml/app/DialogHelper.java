@@ -143,7 +143,7 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            titleParams.setMargins(0, (int) (16.5f * density), 0, (int) (11 * density)); 
+            titleParams.setMargins(0, (int) (12.5f * density), 0, (int) (11 * density)); 
             titleView.setLayoutParams(titleParams);
             layout.addView(titleView);
 
@@ -178,7 +178,7 @@ public class DialogHelper {
             );
             
             // MARGINA ISPOD INPUT POLJA
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (14 * density));
             layout.addView(input, inputParams);
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
@@ -214,7 +214,7 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            buttonWrapperParams.setMargins(0, (int) (0 * density), 0, (int) (16.5f * density));
+            buttonWrapperParams.setMargins(0, (int) (0 * density), 0, (int) (14.5f * density));
             
             layout.addView(buttonLayout, buttonWrapperParams);
 
