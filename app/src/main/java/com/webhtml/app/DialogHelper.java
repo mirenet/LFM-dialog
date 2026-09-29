@@ -143,7 +143,7 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            titleParams.setMargins(0, (int) (12.5f * density), 0, (int) (11 * density)); 
+            titleParams.setMargins(0, (int) (13.5f * density), 0, (int) (11 * density)); 
             titleView.setLayoutParams(titleParams);
             layout.addView(titleView);
 
