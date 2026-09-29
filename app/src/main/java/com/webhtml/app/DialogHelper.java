@@ -167,9 +167,8 @@ public class DialogHelper {
             inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
             layout.addView(input, inputParams);
 
-            // Vraćena originalna boja texta (#222222) za dugmiće
-            TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.8f, density);
-            TextView closeButton = createStyledButton(activity, "Close", "#222222", 13.8f, density);
+            TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
+            TextView closeButton = createStyledButton(activity, "Close", "#222222", 13.5f, density);
 
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -234,7 +233,8 @@ public class DialogHelper {
         button.setText(text);
         button.setTextColor(Color.parseColor(textColorHex));
         button.setTextSize(textSizeSp);
-        button.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
+        // Ispravka: uklonjen BOLD, vraćen normalan font težine za dugmiće
+        button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         button.setGravity(Gravity.CENTER);
         button.setIncludeFontPadding(false);
         button.getPaint().setSubpixelText(true);
