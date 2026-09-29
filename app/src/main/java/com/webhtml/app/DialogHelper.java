@@ -27,7 +27,6 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
             float density = activity.getResources().getDisplayMetrics().density;
 
-            // Pozadinski zatamnjeni overlay unutar granica prozora
             final FrameLayout overlayContainer = new FrameLayout(activity);
             overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
             overlayContainer.setClickable(true);
@@ -137,8 +136,8 @@ public class DialogHelper {
             titleView.setTextSize(16);
             titleView.setTypeface(null, Typeface.BOLD);
             titleView.setGravity(Gravity.CENTER);
-            // Vraćeno na 16 + malo (17px unutar koda, što daje diskretan 1px efekat)
-            titleView.setPadding(0, 0, 0, (int) (17 * density));
+            // Vraćeno na proverenu meru (16 * density) da sve bude cakum-pakum
+            titleView.setPadding(0, 0, 0, (int) (16 * density));
             layout.addView(titleView);
 
             TextView labelView = new TextView(activity);
