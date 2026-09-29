@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
 import android.widget.EditText;
@@ -28,9 +27,9 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
             float density = activity.getResources().getDisplayMetrics().density;
 
-            // Glavni kontejner preko celog ekrana (zatamnjenje pozadine)
+            // Pozadinski zatamnjeni overlay unutar granica prozora
             final FrameLayout overlayContainer = new FrameLayout(activity);
-            overlayContainer.setBackgroundColor(Color.parseColor("#80000000")); // 50% tamno
+            overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
             overlayContainer.setClickable(true);
             overlayContainer.setFocusable(true);
 
@@ -81,8 +80,8 @@ public class DialogHelper {
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
 
-            // Centriramo prozor unutar overlay-a sa zadatim marginama
-            int marginHorizontal = (int) (40 * density);
+            // Primenjujemo originalnu širinu kroz margine (100 * density ukupno, tj. 50 sa svake strane)
+            int marginHorizontal = (int) (50 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
@@ -93,7 +92,6 @@ public class DialogHelper {
 
             overlayContainer.addView(layout, params);
 
-            // Dodajemo direktno u root aktivnosti (drži se unutar granica tvog prozora/webview-a)
             ViewGroup rootLayout = activity.findViewById(android.R.id.content);
             rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -118,6 +116,7 @@ public class DialogHelper {
 
             final LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
+
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
@@ -193,7 +192,10 @@ public class DialogHelper {
             buttonLayout.addView(closeButton);
             layout.addView(buttonLayout);
 
-            int marginHorizontal = (int) (30 * density);
+            input.clearFocus();
+
+            // Primenjujemo originalnu širinu za download dijalog kroz margine (80 * density ukupno, tj. 40 sa svake strane)
+            int marginHorizontal = (int) (40 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
