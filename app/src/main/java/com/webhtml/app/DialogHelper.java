@@ -116,8 +116,8 @@ public class DialogHelper {
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
-            // Povećan vertikalni padding za dodatnih 6px u visinu
-            int padVertical = (int) (19.5f * density);
+            // Vraćen vertikalni padding na prethodnu meru, horizontalni ostaje usklađen
+            int padVertical = (int) (16.5f * density);
             int padHorizontal = (int) (14 * density);
             layout.setPadding(padHorizontal, padVertical, padHorizontal, padVertical);
 
@@ -197,7 +197,8 @@ public class DialogHelper {
 
             input.clearFocus();
 
-            int marginHorizontal = (int) (28 * density);
+            // Smanjene bočne margine za dodatnih 6px ukupne širine dijaloga
+            int marginHorizontal = (int) (25 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
