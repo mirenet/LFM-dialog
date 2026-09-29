@@ -3,6 +3,7 @@ package com.webhtml.app;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
@@ -40,10 +42,6 @@ public class DialogHelper {
             backgroundDrawable.setCornerRadius(10 * density);
             backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
             layout.setBackground(backgroundDrawable);
-
-            // Omogućavanje da klik van inputa (ili generalno na layout) zatvori tastaturu / fokus
-            layout.setClickable(true);
-            layout.setFocusableInTouchMode(true);
 
             TextView titleView = new TextView(activity);
             titleView.setText("Alert!");
@@ -94,7 +92,6 @@ public class DialogHelper {
             dialog.show();
 
             if (dialog.getWindow() != null) {
-                // Vraćeno jače zatamnjenje uz stabilnu pozadinu i border
                 WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
                 params.dimAmount = 0.5f; 
                 dialog.getWindow().setAttributes(params);
@@ -128,23 +125,6 @@ public class DialogHelper {
             backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
             layout.setBackground(backgroundDrawable);
 
-            // Klikom bilo gde unutra (van inputa), gubi se fokus i uklanja se kursor sa ekrana
-            layout.setClickable(true);
-            layout.setFocusableInTouchMode(true);
-            layout.setOnTouchListener((v, event) -> {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    View currentFocus = activity.getCurrentFocus();
-                    if (currentFocus instanceof EditText) {
-                        currentFocus.clearFocus();
-                        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
-                        }
-                    }
-                }
-                return false;
-            });
-
             TextView titleView = new TextView(activity);
             titleView.setText("Save File");
             titleView.setTextColor(Color.parseColor("#CBD868"));
@@ -168,7 +148,7 @@ public class DialogHelper {
             input.setSingleLine(true);
             input.setPadding((int) (8 * density), (int) (10 * density), (int) (8 * density), (int) (10 * density));
             
-            // Postavljanje tankog, elegantnog sivog kursora umesto debelog sistemskog
+            // Tanak sivi kursor
             setCursorColorAndWidth(input, Color.parseColor("#888888"), (int) (1.5f * density));
 
             GradientDrawable inputBg = new GradientDrawable();
@@ -228,8 +208,33 @@ public class DialogHelper {
 
             dialog.show();
 
+            // Sigurno uklanjanje kursora i gubljenje fokusa klikom bilo gde van EditText-a unutar dijaloga
             if (dialog.getWindow() != null) {
-                // Vraćeno jače zatamnjenje pozadine (0.5f) sa očuvanim borderom
+                View decorView = dialog.getWindow().getDecorView();
+                decorView.setOnTouchListener((v, event) -> {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        View focusedView = activity.getCurrentFocus();
+                        if (focusedView instanceof EditText) {
+                            // Proveravamo da li je kliknuto van EditText granica
+                            int[] location = new int[2];
+                            focusedView.getLocationOnScreen(location);
+                            float x = event.getRawX();
+                            float y = event.getRawY();
+                            if (x < location[0] || x > (location[0] + focusedView.getWidth()) ||
+                                    y < location[1] || y > (location[1] + focusedView.getHeight())) {
+                                focusedView.clearFocus();
+                                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                if (imm != null) {
+                                    imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                });
+            }
+
+            if (dialog.getWindow() != null) {
                 WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
                 params.dimAmount = 0.5f;
                 dialog.getWindow().setAttributes(params);
@@ -245,7 +250,7 @@ public class DialogHelper {
     }
 
     /**
-     * Kreira dugme sa glatkom promenom boje pozadine pri dodiru (bez podrhtavanja filtera)
+     * Kreira dugme sa originalnim, tačno pogođenim LightingColorFilter hover efektom
      */
     private static TextView createStyledButton(Activity activity, String text, String textColorHex, float textSizeSp, float density) {
         TextView button = new TextView(activity);
@@ -262,17 +267,16 @@ public class DialogHelper {
         bg.setCornerRadius(10 * density);
         button.setBackground(bg);
 
-        // Rešeno podrhtavanje: direktna glatka promena heksadekadne boje pozadine (svetlija nijansa za hover)
+        // Vraćen originalni LightingColorFilter efekat za tačnu hover boju
         button.setOnTouchListener((v, event) -> {
-            GradientDrawable drawable = (GradientDrawable) v.getBackground();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    drawable.setColor(Color.parseColor("#E1EC84")); // Svetlija nijansa (simulacija brightness-a)
+                    v.getBackground().setColorFilter(new LightingColorFilter(Color.WHITE, Color.argb(255, 40, 40, 20)));
                     v.invalidate();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    drawable.setColor(Color.parseColor("#CBD868")); // Vraćanje originalne boje
+                    v.getBackground().clearColorFilter();
                     v.invalidate();
                     break;
             }
@@ -283,7 +287,7 @@ public class DialogHelper {
     }
 
     /**
-     * Postavlja tanak, elegantan kursor u EditText polje umesto debele sistemske linije
+     * Postavlja tanak, elegantan sivi kursor u EditText polje
      */
     private static void setCursorColorAndWidth(EditText editText, int color, int widthPx) {
         try {
@@ -294,28 +298,18 @@ public class DialogHelper {
                 cursorDrawable.getPaint().setColor(color);
                 editText.setTextCursorDrawable(cursorDrawable);
             } else {
-                // Refleksija za starije verzije Androida
                 Field editorField = TextView.class.getDeclaredField("mEditor");
                 editorField.setAccessible(true);
                 Object editor = editorField.get(editText);
-                String[] cursorNames = {"mCursorDrawable", "mCursorDrawableRes"};
-                for (String name : cursorNames) {
-                    try {
-                        Field cursorField = editor.getClass().getDeclaredField(name);
-                        cursorField.setAccessible(true);
-                        if (name.equals("mCursorDrawableRes")) {
-                            // Ako je resurs, ignorišemo i probamo direktan drawable
-                            continue;
-                        }
-                        Object drawables = cursorField.get(editor);
-                        if (drawables instanceof android.graphics.drawable.Drawable[]) {
-                            GradientDrawable drawable = new GradientDrawable();
-                            drawable.setColor(color);
-                            drawable.setSize(widthPx, editText.getLineHeight());
-                            ((android.graphics.drawable.Drawable[]) drawables)[0] = drawable;
-                            ((android.graphics.drawable.Drawable[]) drawables)[1] = drawable;
-                        }
-                    } catch (Exception ignored) {}
+                Field cursorField = editor.getClass().getDeclaredField("mCursorDrawable");
+                cursorField.setAccessible(true);
+                Object drawables = cursorField.get(editor);
+                if (drawables instanceof android.graphics.drawable.Drawable[]) {
+                    GradientDrawable drawable = new GradientDrawable();
+                    drawable.setColor(color);
+                    drawable.setSize(widthPx, editText.getLineHeight());
+                    ((android.graphics.drawable.Drawable[]) drawables)[0] = drawable;
+                    ((android.graphics.drawable.Drawable[]) drawables)[1] = drawable;
                 }
             }
         } catch (Exception ignored) {}
