@@ -138,7 +138,7 @@ public class DialogHelper {
 
             // 2. PADDING IZNAD I ISPOD NASLOVA "Save File"
             // setPadding(levo, PADDING IZNAD NASLOVA, desno, PADDING ISPOD NASLOVA)
-            titleView.setPadding(0, (int) (0 * density), 0, (int) (14 * density)); 
+            titleView.setPadding(0, (int) (0 * density), 0, (int) (11 * density)); 
             layout.addView(titleView);
 
             TextView labelView = new TextView(activity);
@@ -149,7 +149,7 @@ public class DialogHelper {
 
             // 3. PADDING IZNAD I ISPOD "File Name" labele
             // setPadding(levo, PADDING IZNAD "File Name", desno, PADDING ISPOD "File Name")
-            labelView.setPadding((int) (6 * density), (int) (5 * density), 0, (int) (1 * density));
+            labelView.setPadding((int) (3 * density), (int) (5 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
             final EditText input = new EditText(activity);
