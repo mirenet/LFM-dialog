@@ -137,8 +137,8 @@ public class DialogHelper {
             titleView.setTextSize(16);
             titleView.setTypeface(null, Typeface.BOLD);
             titleView.setGravity(Gravity.CENTER);
-            // Povećan donji padding naslova sa 16px na 20px (približno 4px više razmaka do File Name)
-            titleView.setPadding(0, 0, 0, (int) (20 * density));
+            // Vraćeno na 16 + malo (17px unutar koda, što daje diskretan 1px efekat)
+            titleView.setPadding(0, 0, 0, (int) (17 * density));
             layout.addView(titleView);
 
             TextView labelView = new TextView(activity);
