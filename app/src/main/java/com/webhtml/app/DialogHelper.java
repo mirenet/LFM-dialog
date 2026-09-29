@@ -82,6 +82,8 @@ public class DialogHelper {
 
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                // Uklonjena sistemska animacija otvaranja za trenutni prikaz (instant)
+                dialog.getWindow().setWindowAnimations(0);
             }
 
             closeButton.setOnClickListener(v -> {
@@ -110,8 +112,12 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
             float density = activity.getResources().getDisplayMetrics().density;
 
-            LinearLayout layout = new LinearLayout(activity);
+            final LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
+
+            // Omogućavamo glavnom layout-u da preuzme fokus kada se klikne van input polja
+            layout.setFocusable(true);
+            layout.setFocusableInTouchMode(true);
 
             int padHorizontal = (int) (14 * density);
             int padTop = (int) (14 * density);
@@ -193,6 +199,8 @@ public class DialogHelper {
 
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                // Uklonjena sistemska animacija za trenutni (instant) prikaz prozora
+                dialog.getWindow().setWindowAnimations(0);
             }
 
             closeButton.setOnClickListener(v -> dialog.dismiss());
@@ -208,21 +216,25 @@ public class DialogHelper {
 
             dialog.show();
 
-            // Sigurno uklanjanje kursora i gubljenje fokusa klikom bilo gde van EditText-a unutar dijaloga
+            // Čim se prozor prikaže, skidamo početni fokus sa input polja da kursor ne svetli sam od sebe
+            input.clearFocus();
+
+            // Pouzdano gubljenje fokusa i skrivanje kursora/tastature pri kliku bilo gde van input polja
             if (dialog.getWindow() != null) {
                 View decorView = dialog.getWindow().getDecorView();
                 decorView.setOnTouchListener((v, event) -> {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         View focusedView = activity.getCurrentFocus();
                         if (focusedView instanceof EditText) {
-                            // Proveravamo da li je kliknuto van EditText granica
                             int[] location = new int[2];
                             focusedView.getLocationOnScreen(location);
                             float x = event.getRawX();
                             float y = event.getRawY();
+                            // Ako je kliknuto van granica EditText-a
                             if (x < location[0] || x > (location[0] + focusedView.getWidth()) ||
                                     y < location[1] || y > (location[1] + focusedView.getHeight())) {
                                 focusedView.clearFocus();
+                                layout.requestFocus(); // Glavni layout preuzima fokus i gasi kursor
                                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                                 if (imm != null) {
                                     imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
@@ -250,7 +262,7 @@ public class DialogHelper {
     }
 
     /**
-     * Kreira dugme sa originalnim, tačno pogođenim LightingColorFilter hover efektom
+     * Kreira dugme sa originalnim LightingColorFilter hover efektom
      */
     private static TextView createStyledButton(Activity activity, String text, String textColorHex, float textSizeSp, float density) {
         TextView button = new TextView(activity);
@@ -267,7 +279,6 @@ public class DialogHelper {
         bg.setCornerRadius(10 * density);
         button.setBackground(bg);
 
-        // Vraćen originalni LightingColorFilter efekat za tačnu hover boju
         button.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
