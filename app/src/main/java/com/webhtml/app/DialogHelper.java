@@ -116,10 +116,14 @@ public class DialogHelper {
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
-            // Blago smanjen vertikalni padding (sa 16.5f na 15f) da se kompenzuje pomeranje
-            int padVertical = (int) (15f * density);
+            int padVertical = (int) (16.5f * density);
             int padHorizontal = (int) (14 * density);
-            layout.setPadding(padHorizontal, padVertical, padHorizontal, padVertical);
+            
+            // Fiksno pomeranje ka vrhu: smanjujemo gornji padding za tačno 3 piksela,
+            // a donji ostaje isti, čime se sadržaj podiže naviše bez povećanja ukupne visine prozora.
+            int padTop = padVertical - (int) (3 * density);
+            int padBottom = padVertical;
+            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -164,8 +168,7 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            // Smanjena donja margina input polja sa 11dp na 8dp (oslobođeno tačno 3px/dp)
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (8 * density));
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
             layout.addView(input, inputParams);
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
@@ -175,7 +178,7 @@ public class DialogHelper {
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             
-            // Mali gornji padding od 3 piksela iznad dugmadi koji gura sve nagore
+            // Dodatni padding (razmak) od 3 piksela iznad dugmadi
             buttonLayout.setPadding(0, (int) (3 * density), 0, 0);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
