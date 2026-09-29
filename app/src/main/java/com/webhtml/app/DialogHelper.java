@@ -36,7 +36,6 @@ public class DialogHelper {
             LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
 
-            // Usklađeno sa HTML primerom za alert (padding: 12px svuda)
             int padAll = (int) (12 * density);
             layout.setPadding(padAll, padAll, padAll, padAll);
 
@@ -78,7 +77,6 @@ public class DialogHelper {
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
 
-            // Primenjujemo originalnu širinu kroz margine (100 * density ukupno, tj. 50 sa svake strane)
             int marginHorizontal = (int) (50 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
@@ -118,8 +116,10 @@ public class DialogHelper {
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
-            int padAll = (int) (14 * density);
-            layout.setPadding(padAll, padAll, padAll, padAll);
+            // Povećan vertikalni padding za ~5px u visinu, horizontalni ostaje usklađen
+            int padVertical = (int) (16.5f * density);
+            int padHorizontal = (int) (14 * density);
+            layout.setPadding(padHorizontal, padVertical, padHorizontal, padVertical);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -134,7 +134,6 @@ public class DialogHelper {
             titleView.setTypeface(null, Typeface.BOLD);
             titleView.setGravity(Gravity.CENTER);
             titleView.setIncludeFontPadding(false);
-            // Minimalno korigovan donji padding naslova (sa 12px na 11px) da se dobije ta jedna željena piksel-dva razmaka
             titleView.setPadding(0, 0, 0, (int) (11 * density));
             layout.addView(titleView);
 
@@ -143,7 +142,6 @@ public class DialogHelper {
             labelView.setTextColor(Color.parseColor("#DADADA"));
             labelView.setTextSize(14);
             labelView.setIncludeFontPadding(false);
-            // Povećan gornji padding labele sa 4px na 5px
             labelView.setPadding((int) (6 * density), (int) (5 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
@@ -177,7 +175,6 @@ public class DialogHelper {
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             buttonLayout.setPadding(0, 0, 0, 0);
 
-            // Jednakija širina dugmadi kroz weight=1 sa širinom 0
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     0,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -200,7 +197,8 @@ public class DialogHelper {
 
             input.clearFocus();
 
-            int marginHorizontal = (int) (40 * density);
+            // Smanjene bočne margine sa 40 na 33 da se dijalog proširi za ~14px ukupno
+            int marginHorizontal = (int) (33 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
