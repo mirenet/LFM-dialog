@@ -96,13 +96,11 @@ public class DialogHelper {
                 params.dimAmount = 0.5f; 
                 dialog.getWindow().setAttributes(params);
 
-                // Dinamičko prilagođavanje širine prema trenutnoj širini prozora (radi savršeno u popup view-u)
                 View decorView = dialog.getWindow().getDecorView();
                 decorView.post(() -> {
                     int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
                     WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                     lp.copyFrom(dialog.getWindow().getAttributes());
-                    // Zauzima 85% širine trenutnog prozora aplikacije (uz minimalnu i maksimalnu granicu)
                     lp.width = Math.max((int) (250 * density), currentWindowWidth - (int) (80 * density));
                     lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                     dialog.getWindow().setAttributes(lp);
@@ -255,7 +253,6 @@ public class DialogHelper {
                 params.dimAmount = 0.5f;
                 dialog.getWindow().setAttributes(params);
 
-                // Dinamičko prilagođavanje širine prema trenutnoj širini prozora aplikacije u popup view-u
                 View decorView = dialog.getWindow().getDecorView();
                 decorView.post(() -> {
                     int currentWindowWidth = activity.getWindow().getDecorView().getWidth();
@@ -322,7 +319,7 @@ public class DialogHelper {
                     drawable.setColor(color);
                     drawable.setSize(widthPx, editText.getLineHeight());
                     ((android.graphics.drawable.Drawable[]) drawables)[0] = drawable;
-                    ((android.graphics.Dialog.Drawable[]) drawables)[1] = drawable;
+                    ((android.graphics.drawable.Drawable[]) drawables)[1] = drawable;
                 }
             }
         } catch (Exception ignored) {}
