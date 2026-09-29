@@ -143,7 +143,7 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            titleParams.setMargins(0, (int) (12f * density), 0, (int) (11 * density)); 
+            titleParams.setMargins(0, (int) (12.5f * density), 0, (int) (11 * density)); 
             titleView.setLayoutParams(titleParams);
             layout.addView(titleView);
 
@@ -154,7 +154,7 @@ public class DialogHelper {
             labelView.setIncludeFontPadding(false);
 
             // PADDING IZNAD I ISPOD "File Name" labele
-            labelView.setPadding((int) (8 * density), (int) (5 * density), 0, (int) (1 * density));
+            labelView.setPadding((int) (9 * density), (int) (5 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
             final EditText input = new EditText(activity);
