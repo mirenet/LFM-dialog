@@ -117,6 +117,9 @@ public class DialogHelper {
 
             int padVertical = (int) (16.5f * density);
             int padHorizontal = (int) (14 * density);
+            
+            // 1. PADDING ISPOD CELOG PROZORA (Gleda se donji padding celog kontejnera)
+            // Možeš ga smanjiti ovde (npr. umesto padVertical staviš manju vrednost) da skratiš prozor dole:
             layout.setPadding(padHorizontal, padVertical, padHorizontal, padVertical);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
@@ -132,7 +135,10 @@ public class DialogHelper {
             titleView.setTypeface(null, Typeface.BOLD);
             titleView.setGravity(Gravity.CENTER);
             titleView.setIncludeFontPadding(false);
-            titleView.setPadding(0, 0, 0, (int) (11 * density));
+
+            // 2. PADDING IZNAD I ISPOD NASLOVA "Save File"
+            // setPadding(levo, PADDING IZNAD NASLOVA, desno, PADDING ISPOD NASLOVA)
+            titleView.setPadding(0, (int) (0 * density), 0, (int) (14 * density)); 
             layout.addView(titleView);
 
             TextView labelView = new TextView(activity);
@@ -140,6 +146,9 @@ public class DialogHelper {
             labelView.setTextColor(Color.parseColor("#DADADA"));
             labelView.setTextSize(14);
             labelView.setIncludeFontPadding(false);
+
+            // 3. PADDING IZNAD I ISPOD "File Name" labele
+            // setPadding(levo, PADDING IZNAD "File Name", desno, PADDING ISPOD "File Name")
             labelView.setPadding((int) (6 * density), (int) (5 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
@@ -162,7 +171,9 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            // Smanjena donja margina input polja sa 11dp na 8dp (oslobođeno tačno 3 piksela unutar prozora)
+            
+            // 4. MARGINA ISPOD INPUT POLJA (Gornja margina je 4dp, Donja margina je 11dp)
+            // setMargins(levo, margina iznad inputa, desno, MARGINA ISPOD INPUT POLJA)
             inputParams.setMargins(0, (int) (4 * density), 0, (int) (8 * density));
             layout.addView(input, inputParams);
 
@@ -173,8 +184,9 @@ public class DialogHelper {
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             
-            // Dugmići se spuštaju nadole za tačno 3 piksela koristeći oslobođeni prostor iznad njih
-            buttonLayout.setPadding(0, (int) (3 * density), 0, 0);
+            // 5. PADDING IZNAD DUGMADI "Save" i "Close" (Ovo pravi razmak između input polja i dugmadi)
+            // setPadding(levo, PADDING IZNAD DUGMADI, desno, padding ispod dugmadi)
+            buttonLayout.setPadding(0, (int) (0 * density), 0, 0);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     0,
@@ -239,6 +251,9 @@ public class DialogHelper {
         button.getPaint().setSubpixelText(true);
 
         int btnPad = (int) (10 * density);
+        
+        // 6. UNUTRAŠNJI PADDING SAMIH DUGMADI (Gore, levo, dole, desno)
+        // Ako hoćeš da smanjiš visinu samih dugmadi, ovde menjaš btnPad
         button.setPadding(btnPad, btnPad, btnPad, btnPad);
 
         GradientDrawable bg = new GradientDrawable();
