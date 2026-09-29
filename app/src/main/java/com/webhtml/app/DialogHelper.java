@@ -178,7 +178,7 @@ public class DialogHelper {
             );
             
             // MARGINA IZNAD I ISPOD INPUT POLJA
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (15 * density));
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
             layout.addView(input, inputParams);
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
