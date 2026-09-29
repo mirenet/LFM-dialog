@@ -36,11 +36,9 @@ public class DialogHelper {
             LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
 
-            int padHorizontal = (int) (16 * density);
-            int padTop = (int) (14 * density);
-            int padBottom = (int) (12 * density);
-
-            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
+            // Usklađeno sa HTML primerom za alert (padding: 12px svuda)
+            int padAll = (int) (12 * density);
+            layout.setPadding(padAll, padAll, padAll, padAll);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -70,7 +68,7 @@ public class DialogHelper {
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     (int) (90 * density),
-                    (int) (38 * density)
+                    LinearLayout.LayoutParams.WRAP_CONTENT
             );
 
             LinearLayout buttonLayout = new LinearLayout(activity);
@@ -120,11 +118,8 @@ public class DialogHelper {
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
-            int padHorizontal = (int) (14 * density);
-            int padTop = (int) (14 * density);
-            int padBottom = (int) (14 * density);
-
-            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
+            int padAll = (int) (14 * density);
+            layout.setPadding(padAll, padAll, padAll, padAll);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -145,7 +140,8 @@ public class DialogHelper {
             labelView.setText("File Name:");
             labelView.setTextColor(Color.parseColor("#DADADA"));
             labelView.setTextSize(14);
-            labelView.setPadding((int) (6 * density), (int) (10 * density), 0, (int) (1 * density));
+            // Smanjen gornji padding da se precizno poklopi sa HTML razmakom (margin-top: 10px / margin-bottom: 1px)
+            labelView.setPadding((int) (6 * density), (int) (4 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
             final EditText input = new EditText(activity);
@@ -178,9 +174,10 @@ public class DialogHelper {
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             buttonLayout.setPadding(0, 0, 0, 0);
 
+            // Usklađeno sa HTML-om: WRAP_CONTENT umesto fiksne visine da dugme prati tačno padding: 10px
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    (int) (38 * density)
+                    LinearLayout.LayoutParams.WRAP_CONTENT
             );
             btnParams.weight = 1;
             btnParams.setMargins(0, 0, (int) (8 * density), 0);
@@ -234,6 +231,10 @@ public class DialogHelper {
         button.setGravity(Gravity.CENTER);
         button.setIncludeFontPadding(false);
         button.getPaint().setSubpixelText(true);
+
+        // Eksplicitno postavljen padding dugmeta na 10dp (isto kao padding: 10px u HTML-u)
+        int btnPad = (int) (10 * density);
+        button.setPadding(btnPad, btnPad, btnPad, btnPad);
 
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.parseColor("#CBD868"));
