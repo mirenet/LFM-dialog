@@ -134,7 +134,8 @@ public class DialogHelper {
             titleView.setTypeface(null, Typeface.BOLD);
             titleView.setGravity(Gravity.CENTER);
             titleView.setIncludeFontPadding(false);
-            titleView.setPadding(0, 0, 0, (int) (12 * density));
+            // Minimalno korigovan donji padding naslova (sa 12px na 11px) da se dobije ta jedna željena piksel-dva razmaka
+            titleView.setPadding(0, 0, 0, (int) (11 * density));
             layout.addView(titleView);
 
             TextView labelView = new TextView(activity);
@@ -142,7 +143,8 @@ public class DialogHelper {
             labelView.setTextColor(Color.parseColor("#DADADA"));
             labelView.setTextSize(14);
             labelView.setIncludeFontPadding(false);
-            labelView.setPadding((int) (6 * density), (int) (4 * density), 0, (int) (1 * density));
+            // Povećan gornji padding labele sa 4px na 5px
+            labelView.setPadding((int) (6 * density), (int) (5 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
             final EditText input = new EditText(activity);
@@ -233,7 +235,6 @@ public class DialogHelper {
         button.setText(text);
         button.setTextColor(Color.parseColor(textColorHex));
         button.setTextSize(textSizeSp);
-        // Ispravka: uklonjen BOLD, vraćen normalan font težine za dugmiće
         button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         button.setGravity(Gravity.CENTER);
         button.setIncludeFontPadding(false);
