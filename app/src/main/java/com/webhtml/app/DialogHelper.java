@@ -36,9 +36,11 @@ public class DialogHelper {
             LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
 
-            // Usklađeno sa HTML primerom za alert (padding: 12px svuda)
-            int padAll = (int) (12 * density);
-            layout.setPadding(padAll, padAll, padAll, padAll);
+            int padHorizontal = (int) (16 * density);
+            int padTop = (int) (14 * density);
+            int padBottom = (int) (12 * density);
+
+            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -68,7 +70,7 @@ public class DialogHelper {
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     (int) (90 * density),
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    (int) (38 * density)
             );
 
             LinearLayout buttonLayout = new LinearLayout(activity);
@@ -78,7 +80,6 @@ public class DialogHelper {
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
 
-            // Primenjujemo originalnu širinu kroz margine (100 * density ukupno, tj. 50 sa svake strane)
             int marginHorizontal = (int) (50 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
@@ -118,8 +119,11 @@ public class DialogHelper {
             layout.setFocusable(true);
             layout.setFocusableInTouchMode(true);
 
-            int padAll = (int) (14 * density);
-            layout.setPadding(padAll, padAll, padAll, padAll);
+            int padHorizontal = (int) (14 * density);
+            int padTop = (int) (14 * density);
+            int padBottom = (int) (14 * density);
+
+            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -133,16 +137,15 @@ public class DialogHelper {
             titleView.setTextSize(16);
             titleView.setTypeface(null, Typeface.BOLD);
             titleView.setGravity(Gravity.CENTER);
-            titleView.setIncludeFontPadding(false);
-            titleView.setPadding(0, 0, 0, (int) (12 * density));
+            // Povećan donji padding naslova sa 16px na 20px (približno 4px više razmaka do File Name)
+            titleView.setPadding(0, 0, 0, (int) (20 * density));
             layout.addView(titleView);
 
             TextView labelView = new TextView(activity);
             labelView.setText("File Name:");
             labelView.setTextColor(Color.parseColor("#DADADA"));
             labelView.setTextSize(14);
-            labelView.setIncludeFontPadding(false);
-            labelView.setPadding((int) (6 * density), (int) (4 * density), 0, (int) (1 * density));
+            labelView.setPadding((int) (6 * density), (int) (10 * density), 0, (int) (1 * density));
             layout.addView(labelView);
 
             final EditText input = new EditText(activity);
@@ -164,33 +167,26 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
             layout.addView(input, inputParams);
 
-            TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
-            TextView closeButton = createStyledButton(activity, "Close", "#222222", 13.5f, density);
+            TextView saveButton = createStyledButton(activity, "Save", "#222222", 14f, density);
+            TextView closeButton = createStyledButton(activity, "Close", "#222222", 14f, density);
 
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             buttonLayout.setPadding(0, 0, 0, 0);
 
-            // Jednakija širina dugmadi kroz weight=1 sa širinom 0
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                    0,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    (int) (38 * density)
             );
             btnParams.weight = 1;
             btnParams.setMargins(0, 0, (int) (8 * density), 0);
 
             saveButton.setLayoutParams(btnParams);
-
-            LinearLayout.LayoutParams closeBtnParams = new LinearLayout.LayoutParams(
-                    0,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            closeBtnParams.weight = 1;
-            closeButton.setLayoutParams(closeBtnParams);
+            closeButton.setLayoutParams(btnParams);
 
             buttonLayout.addView(saveButton);
             buttonLayout.addView(closeButton);
@@ -233,14 +229,10 @@ public class DialogHelper {
         button.setText(text);
         button.setTextColor(Color.parseColor(textColorHex));
         button.setTextSize(textSizeSp);
-        // Ispravka: uklonjen BOLD, vraćen normalan font težine za dugmiće
         button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         button.setGravity(Gravity.CENTER);
         button.setIncludeFontPadding(false);
         button.getPaint().setSubpixelText(true);
-
-        int btnPad = (int) (10 * density);
-        button.setPadding(btnPad, btnPad, btnPad, btnPad);
 
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.parseColor("#CBD868"));
