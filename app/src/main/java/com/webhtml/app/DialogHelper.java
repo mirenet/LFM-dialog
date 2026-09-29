@@ -12,6 +12,7 @@ import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
@@ -91,46 +92,17 @@ public class DialogHelper {
 
             dialog.show();
 
-            // Inicijalna širina sa originalnim dimenzijama
+            // Postavljanje tačne širine bez opasnih listenera
             if (dialog.getWindow() != null) {
-                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f; 
-                dialog.getWindow().setAttributes(params);
-
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
                 int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                lp.width = screenWidth - (int) (100 * density);
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(lp);
+                int targetWidth = screenWidth - (int) (100 * density);
+                
+                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+                params.dimAmount = 0.5f;
+                params.width = targetWidth;
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setAttributes(params);
             }
-
-            // Real-time praćenje promene veličine sa apsolutnom zaštitom od rušenja
-            View appDecorView = activity.getWindow().getDecorView();
-            View.OnLayoutChangeListener resizeListener = new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    if (dialog.isShowing() && dialog.getWindow() != null) {
-                        int newWidth = right - left;
-                        if (newWidth > 50) {
-                            WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-                            int desiredWidth = newWidth - (int) (100 * density);
-                            int safeWidth = Math.min(newWidth, Math.max((int) (80 * density), Math.min(desiredWidth, newWidth)));
-                            if (lp.width != safeWidth) {
-                                lp.width = safeWidth;
-                                dialog.getWindow().setAttributes(lp);
-                            }
-                        }
-                    }
-                }
-            };
-
-            appDecorView.addOnLayoutChangeListener(resizeListener);
-
-            dialog.setOnDismissListener(dialogInterface -> {
-                appDecorView.removeOnLayoutChangeListener(resizeListener);
-            });
         });
     }
 
@@ -266,46 +238,17 @@ public class DialogHelper {
                 });
             }
 
-            // Inicijalna širina za download dijalog
+            // Postavljanje tačne širine za download dijalog bez rizika od rušenja
             if (dialog.getWindow() != null) {
+                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                int targetWidth = screenWidth - (int) (80 * density);
+
                 WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
                 params.dimAmount = 0.5f;
+                params.width = targetWidth;
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 dialog.getWindow().setAttributes(params);
-
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
-                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                lp.width = screenWidth - (int) (80 * density);
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(lp);
             }
-
-            // Real-time praćenje promene veličine sa apsolutnom zaštitom za download dijalog
-            View appDecorView = activity.getWindow().getDecorView();
-            View.OnLayoutChangeListener resizeListener = new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                           int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    if (dialog.isShowing() && dialog.getWindow() != null) {
-                        int newWidth = right - left;
-                        if (newWidth > 50) {
-                            WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-                            int desiredWidth = newWidth - (int) (80 * density);
-                            int safeWidth = Math.min(newWidth, Math.max((int) (80 * density), Math.min(desiredWidth, newWidth)));
-                            if (lp.width != safeWidth) {
-                                lp.width = safeWidth;
-                                dialog.getWindow().setAttributes(lp);
-                            }
-                        }
-                    }
-                }
-            };
-
-            appDecorView.addOnLayoutChangeListener(resizeListener);
-
-            dialog.setOnDismissListener(dialogInterface -> {
-                appDecorView.removeOnLayoutChangeListener(resizeListener);
-            });
         });
     }
 
