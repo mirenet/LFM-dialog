@@ -75,6 +75,15 @@ public class DialogHelper {
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
 
+            // Primenjujemo MATCH_PARENT širinu sa marginama (profesionalni WebView pristup)
+            int marginHorizontal = (int) (50 * density);
+            ViewGroup.MarginLayoutParams containerParams = new ViewGroup.MarginLayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            containerParams.setMargins(marginHorizontal, 0, marginHorizontal, 0);
+            layout.setLayoutParams(containerParams);
+
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setView(layout)
                     .setCancelable(false)
@@ -83,6 +92,10 @@ public class DialogHelper {
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.getWindow().setWindowAnimations(0);
+                
+                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+                params.dimAmount = 0.5f;
+                dialog.getWindow().setAttributes(params);
             }
 
             closeButton.setOnClickListener(v -> {
@@ -91,18 +104,6 @@ public class DialogHelper {
             });
 
             dialog.show();
-
-            // Postavljanje tačne širine bez opasnih listenera
-            if (dialog.getWindow() != null) {
-                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                int targetWidth = screenWidth - (int) (100 * density);
-                
-                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f;
-                params.width = targetWidth;
-                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(params);
-            }
         });
     }
 
@@ -188,6 +189,15 @@ public class DialogHelper {
             buttonLayout.addView(closeButton);
             layout.addView(buttonLayout);
 
+            // Primenjujemo MATCH_PARENT širinu sa marginama za download dijalog
+            int marginHorizontal = (int) (40 * density);
+            ViewGroup.MarginLayoutParams containerParams = new ViewGroup.MarginLayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            containerParams.setMargins(marginHorizontal, 0, marginHorizontal, 0);
+            layout.setLayoutParams(containerParams);
+
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setView(layout)
                     .setCancelable(false)
@@ -196,6 +206,10 @@ public class DialogHelper {
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.getWindow().setWindowAnimations(0);
+                
+                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+                params.dimAmount = 0.5f;
+                dialog.getWindow().setAttributes(params);
             }
 
             closeButton.setOnClickListener(v -> dialog.dismiss());
@@ -236,18 +250,6 @@ public class DialogHelper {
                     }
                     return false;
                 });
-            }
-
-            // Postavljanje tačne širine za download dijalog bez rizika od rušenja
-            if (dialog.getWindow() != null) {
-                int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                int targetWidth = screenWidth - (int) (80 * density);
-
-                WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-                params.dimAmount = 0.5f;
-                params.width = targetWidth;
-                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(params);
             }
         });
     }
