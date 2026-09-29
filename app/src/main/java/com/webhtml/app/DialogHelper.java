@@ -117,11 +117,7 @@ public class DialogHelper {
 
             int padVertical = (int) (16.5f * density);
             int padHorizontal = (int) (14 * density);
-            
-            // Gornji padding ostaje isti, a donji smanjujemo za 3 piksela da kompenzujemo spuštanje dugmadi
-            int padTop = padVertical;
-            int padBottom = padVertical - (int) (3 * density);
-            layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
+            layout.setPadding(padHorizontal, padVertical, padHorizontal, padVertical);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
             backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
@@ -166,7 +162,8 @@ public class DialogHelper {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (11 * density));
+            // Smanjena donja margina input polja sa 11dp na 8dp (oslobođeno tačno 3 piksela unutar prozora)
+            inputParams.setMargins(0, (int) (4 * density), 0, (int) (8 * density));
             layout.addView(input, inputParams);
 
             TextView saveButton = createStyledButton(activity, "Save", "#222222", 13.5f, density);
@@ -176,8 +173,8 @@ public class DialogHelper {
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             
-            // Spuštamo dugmiće nadole tako što im stavljamo gornji padding na 6 piksela
-            buttonLayout.setPadding(0, (int) (6 * density), 0, 0);
+            // Dugmići se spuštaju nadole za tačno 3 piksela koristeći oslobođeni prostor iznad njih
+            buttonLayout.setPadding(0, (int) (3 * density), 0, 0);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     0,
