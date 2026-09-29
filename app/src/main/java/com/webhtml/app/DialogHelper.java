@@ -27,7 +27,6 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
             float density = activity.getResources().getDisplayMetrics().density;
 
-            // Pozadinski zatamnjeni overlay unutar granica prozora
             final FrameLayout overlayContainer = new FrameLayout(activity);
             overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
             overlayContainer.setClickable(true);
@@ -119,10 +118,9 @@ public class DialogHelper {
             int padVertical = (int) (16.5f * density);
             int padHorizontal = (int) (14 * density);
             
-            // Fiksno pomeranje ka vrhu: smanjujemo gornji padding za tačno 3 piksela,
-            // a donji ostaje isti, čime se sadržaj podiže naviše bez povećanja ukupne visine prozora.
-            int padTop = padVertical - (int) (3 * density);
-            int padBottom = padVertical;
+            // Gornji padding ostaje isti, a donji smanjujemo za 3 piksela da kompenzujemo spuštanje dugmadi
+            int padTop = padVertical;
+            int padBottom = padVertical - (int) (3 * density);
             layout.setPadding(padHorizontal, padTop, padHorizontal, padBottom);
 
             GradientDrawable backgroundDrawable = new GradientDrawable();
@@ -178,8 +176,8 @@ public class DialogHelper {
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             
-            // Dodatni padding (razmak) od 3 piksela iznad dugmadi
-            buttonLayout.setPadding(0, (int) (3 * density), 0, 0);
+            // Spuštamo dugmiće nadole tako što im stavljamo gornji padding na 6 piksela
+            buttonLayout.setPadding(0, (int) (6 * density), 0, 0);
 
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     0,
