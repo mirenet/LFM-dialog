@@ -29,7 +29,7 @@ public class DialogHelper {
 
             final FrameLayout overlayContainer = new FrameLayout(activity);
 
-            // ZATAMNJENJE POZADINE
+            // ZATAMNJENJE POZADINE (kao u HTML-u: rgba(0, 0, 0, 0.50) -> #80000000)
             overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
             overlayContainer.setClickable(true);
             overlayContainer.setFocusable(true);
@@ -37,6 +37,7 @@ public class DialogHelper {
             LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
 
+            // [ALERT PROZOR - VISINA]: padding: 0 12px 8px 12px
             int padTopBottom = (int) (8 * density);
             int padHorizontal = (int) (12 * density);
             layout.setPadding(padHorizontal, 0, padHorizontal, padTopBottom);
@@ -83,19 +84,21 @@ public class DialogHelper {
             LinearLayout buttonLayout = new LinearLayout(activity);
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+            
+            // Prilagođen padding-top da visina bude identična kao kod Download dijaloga
             buttonLayout.setPadding(0, (int) (57 * density), 0, 0);
             buttonLayout.addView(closeButton);
             layout.addView(buttonLayout);
 
-            // KORIŠĆENJE PROVERENIH MARGINA IZ STAROG KODA (prati širinu prozora uvek)
-            int marginHorizontal = (int) (50 * density);
+            int marginHorizontal = (int) (50 * density); // Prilagodi po želji ili ostavi
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
             );
             params.gravity = Gravity.CENTER;
-            params.leftMargin = marginHorizontal;
-            params.rightMargin = marginHorizontal;
+            // Zadržana tvoja originalna logika centriranja sa marginom / procentima
+            params.leftMargin = (int) (activity.getResources().getDisplayMetrics().widthPixels * (1 - 0.824) / 2);
+            params.rightMargin = params.leftMargin;
 
             overlayContainer.addView(layout, params);
 
@@ -158,7 +161,7 @@ public class DialogHelper {
             input.setTextSize(14);
             input.setTextColor(Color.parseColor("#c5c5c7"));
             input.setSingleLine(true);
-            input.setBackground(null);
+            input.setBackground(null); // Uklanjamo default pozadinu jer stavljamo liniju ispod
             input.setPadding((int) (2 * density), (int) (5 * density), (int) (2 * density), (int) (5 * density));
             
             setCursorColorAndWidth(input, Color.parseColor("#617AC2"), (int) (1.5f * density));
@@ -170,7 +173,7 @@ public class DialogHelper {
             inputParams.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
             layout.addView(input, inputParams);
 
-            // LINIJA ISPOD INPUTA
+            // LINIJA ISPOD INPUTA (#272729)
             View lineView = new View(activity);
             LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -188,12 +191,14 @@ public class DialogHelper {
             buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
             
+            // Razmak iznad dugmadi
             LinearLayout.LayoutParams buttonWrapperParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
             buttonWrapperParams.setMargins(0, (int) (44 * density), 0, 0);
             
+            // Dugmad idu desno sa razmakom između sebe (gap: 8px)
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -207,15 +212,14 @@ public class DialogHelper {
 
             input.clearFocus();
 
-            // KORIŠĆENJE PROVERENIH MARGINA IZ STAROG KODA (prati širinu prozora uvek)
-            int marginHorizontal = (int) (25 * density);
+            int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+            int dialogWidth = (int) (screenWidth * 0.824);
+
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    dialogWidth,
                     FrameLayout.LayoutParams.WRAP_CONTENT
             );
             params.gravity = Gravity.CENTER;
-            params.leftMargin = marginHorizontal;
-            params.rightMargin = marginHorizontal;
 
             overlayContainer.addView(layout, params);
 
@@ -254,15 +258,17 @@ public class DialogHelper {
         button.setHeight(height);
         button.setPadding((int) (16 * density), 0, (int) (16 * density), 0);
 
+        // Zaobljeno dugme sa radijusom 32px
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(Color.TRANSPARENT);
         bg.setCornerRadius(32 * density);
         button.setBackground(bg);
 
+        // Hover / Active efekat preko dodira (slično rgba(255,255,255,0.04) / 0.12)
         button.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    bg.setColor(Color.parseColor("#1FFFFFFF"));
+                    bg.setColor(Color.parseColor("#1FFFFFFF")); // blagi white overlay za pritisak
                     v.invalidate();
                     break;
                 case MotionEvent.ACTION_UP:
