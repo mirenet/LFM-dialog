@@ -249,7 +249,6 @@ public class DialogHelper {
             //NA SREDINI:
             //params.gravity = Gravity.CENTER;
 
-
             // SLOBODNO POMERANJE:
             //params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
             //params.topMargin = (int) (100 * density);
