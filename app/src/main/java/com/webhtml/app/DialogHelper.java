@@ -239,15 +239,15 @@ public class DialogHelper {
             // POLOZAJ »DOWNLOAD« PROZORA NA EKRANU
 
             // NA VRHU:
-            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            params.topMargin = (int) (50 * density);
+            //params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            //params.topMargin = (int) (50 * density);
 
             // NA DNU:
             //params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
             //params.bottomMargin = (int) (30 * density);            
 
             //NA SREDINI:
-            //params.gravity = Gravity.CENTER;
+            params.gravity = Gravity.CENTER;
 
             // SLOBODNO POMERANJE:
             //params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
