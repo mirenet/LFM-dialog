@@ -1,9 +1,7 @@
 package com.webhtml.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.LightingColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -13,332 +11,1017 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.lang.reflect.Field;
 
 public class DialogHelper {
 
-    public static void showCustomAlert(Activity activity, String message, JsResult result) {
+    // ============================================================
+    // DIALOG STIL
+    // ============================================================
+
+    private static final String DIALOG_BACKGROUND = "#1C1C1E";
+    private static final String DIALOG_BORDER = "#2F2F2F";
+
+    private static final String TITLE_COLOR = "#C5C5C5";
+    private static final String MAIN_TEXT_COLOR = "#C5C5C7";
+    private static final String SECONDARY_TEXT_COLOR = "#A4A4A6";
+
+    private static final String INPUT_LINE_COLOR = "#303032";
+
+    // Plava boja teksta dugmadi
+    private static final String BUTTON_TEXT_COLOR = "#7890C5";
+
+    // Boja površine dugmeta kada se pritisne
+    private static final String BUTTON_PRESSED_COLOR = "#303033";
+
+    private static final float DIALOG_RADIUS_DP = 10f;
+    private static final float DIALOG_BORDER_DP = 1f;
+
+    // Širina prozora
+    private static final float DIALOG_MARGIN_HORIZONTAL_DP = 26f;
+
+
+    // ============================================================
+    // ALERT
+    // ============================================================
+
+    public static void showCustomAlert(
+            Activity activity,
+            String message,
+            JsResult result) {
+
         activity.runOnUiThread(() -> {
-            float density = activity.getResources().getDisplayMetrics().density;
 
-            final FrameLayout overlayContainer = new FrameLayout(activity);
+            float density = activity.getResources()
+                    .getDisplayMetrics().density;
 
-            // ZATAMNJENJE POZADINE !!!
-            // #00000000 - providno; #40000000 - blago 25%; 
-            // #80000000 - srednje 50%; #C0000000 - jako 75%;
-            // #FF000000 - potpuno crno 100%;
-            overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
+            final FrameLayout overlayContainer =
+                    new FrameLayout(activity);
+
+            // ZATAMNJENJE POZADINE
+            overlayContainer.setBackgroundColor(
+                    Color.parseColor("#80000000")
+            );
+
             overlayContainer.setClickable(true);
             overlayContainer.setFocusable(true);
 
-            LinearLayout layout = new LinearLayout(activity);
-            layout.setOrientation(LinearLayout.VERTICAL);
 
-            // [ALERT PROZOR - VISINA]: Unutrašnji padding celog prozora utiče na visinu
-            int padAll = (int) (12 * density);
-            layout.setPadding(padAll, padAll, padAll, padAll);
+            // ====================================================
+            // GLAVNI DIALOG
+            // ====================================================
 
-            GradientDrawable backgroundDrawable = new GradientDrawable();
-            backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
-            backgroundDrawable.setCornerRadius(10 * density);
-            backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
-            layout.setBackground(backgroundDrawable);
+            LinearLayout layout =
+                    new LinearLayout(activity);
 
-            TextView titleView = new TextView(activity);
+            layout.setOrientation(
+                    LinearLayout.VERTICAL
+            );
+
+            int padHorizontal =
+                    (int) (12 * density);
+
+            layout.setPadding(
+                    padHorizontal,
+                    0,
+                    padHorizontal,
+                    0
+            );
+
+
+            // POZADINA + OKVIR
+            GradientDrawable backgroundDrawable =
+                    new GradientDrawable();
+
+            backgroundDrawable.setColor(
+                    Color.parseColor(DIALOG_BACKGROUND)
+            );
+
+            backgroundDrawable.setCornerRadius(
+                    DIALOG_RADIUS_DP * density
+            );
+
+            backgroundDrawable.setStroke(
+                    (int) (DIALOG_BORDER_DP * density),
+                    Color.parseColor(DIALOG_BORDER)
+            );
+
+            layout.setBackground(
+                    backgroundDrawable
+            );
+
+
+            // ====================================================
+            // NASLOV
+            // ====================================================
+
+            TextView titleView =
+                    new TextView(activity);
+
             titleView.setText("Alert!");
-            titleView.setTextColor(Color.parseColor("#CBD868"));
+
+            titleView.setTextColor(
+                    Color.parseColor(TITLE_COLOR)
+            );
+
             titleView.setTextSize(16);
-            titleView.setTypeface(null, Typeface.BOLD);
-            titleView.setGravity(Gravity.CENTER);
-            titleView.setPadding(0, (int) (3 * density), 0, (int) (16 * density));
-            layout.addView(titleView);
 
-            TextView messageView = new TextView(activity);
+            titleView.setTypeface(
+                    Typeface.create(
+                            "sans-serif",
+                            Typeface.BOLD
+                    )
+            );
+
+            titleView.setGravity(
+                    Gravity.CENTER
+            );
+
+            titleView.setIncludeFontPadding(false);
+
+
+            LinearLayout.LayoutParams titleParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            titleParams.setMargins(
+                    0,
+                    (int) (16 * density),
+                    0,
+                    (int) (14 * density)
+            );
+
+            layout.addView(
+                    titleView,
+                    titleParams
+            );
+
+
+            // ====================================================
+            // PORUKA
+            // ====================================================
+
+            TextView messageView =
+                    new TextView(activity);
+
             messageView.setText(message);
-            messageView.setTextColor(Color.parseColor("#BAB9BF"));
-            messageView.setTextSize(15);
-            messageView.setLineSpacing(0, 1.4f);
-            messageView.setGravity(Gravity.START);
-            messageView.setPadding((int) (6 * density), (int) (20 * density), 0, (int) (32 * density));
-            layout.addView(messageView);
 
-            TextView closeButton = createStyledButton(activity, "Close", "#000000", 13.5f, density);
-
-            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                    (int) (90 * density),
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+            messageView.setTextColor(
+                    Color.parseColor(MAIN_TEXT_COLOR)
             );
 
-            LinearLayout buttonLayout = new LinearLayout(activity);
-            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-            buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
-            buttonLayout.setPadding(0, (int) (12 * density), 0, 0);
-            buttonLayout.addView(closeButton, btnParams);
-            layout.addView(buttonLayout);
+            messageView.setTextSize(14);
 
-            // [ALERT PROZOR - ŠIRINA]: Leva i desna margina kontrolišu širinu prozora
-            int marginHorizontal = (int) (50 * density);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
+            messageView.setLineSpacing(
+                    0,
+                    1.35f
             );
-            params.gravity = Gravity.CENTER;
-            params.leftMargin = marginHorizontal;
-            params.rightMargin = marginHorizontal;
 
-            overlayContainer.addView(layout, params);
+            messageView.setGravity(
+                    Gravity.START
+            );
 
-            ViewGroup rootLayout = activity.findViewById(android.R.id.content);
-            rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            ));
+            messageView.setIncludeFontPadding(false);
+
+            messageView.setPadding(
+                    (int) (1 * density),
+                    (int) (4 * density),
+                    (int) (1 * density),
+                    (int) (8 * density)
+            );
+
+            layout.addView(
+                    messageView,
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+            );
+
+
+            // ====================================================
+            // CLOSE DUGME
+            // ====================================================
+
+            TextView closeButton =
+                    createStyledButton(
+                            activity,
+                            "Close",
+                            BUTTON_TEXT_COLOR,
+                            14f,
+                            density
+                    );
+
+
+            LinearLayout buttonLayout =
+                    new LinearLayout(activity);
+
+            buttonLayout.setOrientation(
+                    LinearLayout.HORIZONTAL
+            );
+
+            buttonLayout.setGravity(
+                    Gravity.END | Gravity.CENTER_VERTICAL
+            );
+
+            buttonLayout.setPadding(
+                    0,
+                    (int) (4 * density),
+                    0,
+                    (int) (8 * density)
+            );
+
+
+            LinearLayout.LayoutParams closeParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            buttonLayout.addView(
+                    closeButton,
+                    closeParams
+            );
+
+            layout.addView(
+                    buttonLayout
+            );
+
+
+            // ====================================================
+            // ŠIRINA DIALOGA
+            // ====================================================
+
+            int marginHorizontal =
+                    (int) (
+                            DIALOG_MARGIN_HORIZONTAL_DP
+                                    * density
+                    );
+
+            FrameLayout.LayoutParams params =
+                    new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            params.gravity =
+                    Gravity.CENTER;
+
+            params.leftMargin =
+                    marginHorizontal;
+
+            params.rightMargin =
+                    marginHorizontal;
+
+
+            overlayContainer.addView(
+                    layout,
+                    params
+            );
+
+
+            ViewGroup rootLayout =
+                    activity.findViewById(
+                            android.R.id.content
+                    );
+
+            rootLayout.addView(
+                    overlayContainer,
+                    new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+            );
+
+
+            // ====================================================
+            // POSTOJEĆA FUNKCIONALNOST
+            // ====================================================
 
             closeButton.setOnClickListener(v -> {
+
                 result.confirm();
-                rootLayout.removeView(overlayContainer);
+
+                rootLayout.removeView(
+                        overlayContainer
+                );
             });
         });
     }
 
-    public static void showNativeDownloadDialog(Activity activity, String suggestedFileName, String url, String mimetype, boolean isBlob, DownloadCallback callback) {
-        activity.runOnUiThread(() -> {
-            float density = activity.getResources().getDisplayMetrics().density;
 
-            final FrameLayout overlayContainer = new FrameLayout(activity);
-            overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
+    // ============================================================
+    // DOWNLOAD DIALOG
+    // ============================================================
+
+    public static void showNativeDownloadDialog(
+            Activity activity,
+            String suggestedFileName,
+            String url,
+            String mimetype,
+            boolean isBlob,
+            DownloadCallback callback) {
+
+        activity.runOnUiThread(() -> {
+
+            float density = activity.getResources()
+                    .getDisplayMetrics().density;
+
+
+            final FrameLayout overlayContainer =
+                    new FrameLayout(activity);
+
+            overlayContainer.setBackgroundColor(
+                    Color.parseColor("#80000000")
+            );
+
             overlayContainer.setClickable(true);
             overlayContainer.setFocusable(true);
 
-            final LinearLayout layout = new LinearLayout(activity);
-            layout.setOrientation(LinearLayout.VERTICAL);
+
+            // ====================================================
+            // GLAVNI DIALOG
+            // ====================================================
+
+            final LinearLayout layout =
+                    new LinearLayout(activity);
+
+            layout.setOrientation(
+                    LinearLayout.VERTICAL
+            );
 
             layout.setFocusable(true);
+
             layout.setFocusableInTouchMode(true);
 
-            int padHorizontal = (int) (14 * density);
-            
-            // 1. VERTIKALNI PADDING CELOG PROZORA JE 0
-            // Da bismo mogli da idemo u minus preko margina, vertikalni padding prozora mora biti 0.
-            // Horizontalni ostaje (14 * density).
-            layout.setPadding(padHorizontal, 0, padHorizontal, 0);
 
-            GradientDrawable backgroundDrawable = new GradientDrawable();
-            backgroundDrawable.setColor(Color.parseColor("#1A1A1C"));
-            backgroundDrawable.setCornerRadius(10 * density);
-            backgroundDrawable.setStroke((int) (0.9f * density), Color.parseColor("#7C874F"));
-            layout.setBackground(backgroundDrawable);
+            int padHorizontal =
+                    (int) (12 * density);
 
-            TextView titleView = new TextView(activity);
+            layout.setPadding(
+                    padHorizontal,
+                    0,
+                    padHorizontal,
+                    0
+            );
+
+
+            // ====================================================
+            // POZADINA + OKVIR
+            // ====================================================
+
+            GradientDrawable backgroundDrawable =
+                    new GradientDrawable();
+
+            backgroundDrawable.setColor(
+                    Color.parseColor(DIALOG_BACKGROUND)
+            );
+
+            backgroundDrawable.setCornerRadius(
+                    DIALOG_RADIUS_DP * density
+            );
+
+            backgroundDrawable.setStroke(
+                    (int) (DIALOG_BORDER_DP * density),
+                    Color.parseColor(DIALOG_BORDER)
+            );
+
+            layout.setBackground(
+                    backgroundDrawable
+            );
+
+
+            // ====================================================
+            // NASLOV
+            // ====================================================
+
+            TextView titleView =
+                    new TextView(activity);
+
             titleView.setText("Save File");
-            titleView.setTextColor(Color.parseColor("#CBD868"));
+
+            titleView.setTextColor(
+                    Color.parseColor(TITLE_COLOR)
+            );
+
             titleView.setTextSize(16);
-            titleView.setTypeface(null, Typeface.BOLD);
-            titleView.setGravity(Gravity.CENTER);
+
+            titleView.setTypeface(
+                    Typeface.create(
+                            "sans-serif",
+                            Typeface.BOLD
+                    )
+            );
+
+            titleView.setGravity(
+                    Gravity.CENTER
+            );
+
             titleView.setIncludeFontPadding(false);
 
-            // [DOWNLOAD PROZOR - VISINA (VRH)]: Gornja margina kontroliše razmak od vrha
-            // 2. GORNJI RAZMAK OD VRHA PROZORA (GDE MOŽEŠ U MINUS)
-            // Ovde koristiš LayoutParams umesto običnog padding-a. 
-            // Gornja margina (trenutno 16.5f * density) drži naslov. Možeš je smanjiti ili staviti u minus (npr. -5 * density).
-            LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            titleParams.setMargins(0, (int) (15 * density), 0, (int) (11 * density)); 
-            titleView.setLayoutParams(titleParams);
-            layout.addView(titleView);
 
-            TextView labelView = new TextView(activity);
+            LinearLayout.LayoutParams titleParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            titleParams.setMargins(
+                    0,
+                    (int) (16 * density),
+                    0,
+                    (int) (13 * density)
+            );
+
+            layout.addView(
+                    titleView,
+                    titleParams
+            );
+
+
+            // ====================================================
+            // FILE NAME LABEL
+            // ====================================================
+
+            TextView labelView =
+                    new TextView(activity);
+
             labelView.setText("File Name:");
-            labelView.setTextColor(Color.parseColor("#DADADA"));
+
+            labelView.setTextColor(
+                    Color.parseColor(
+                            SECONDARY_TEXT_COLOR
+                    )
+            );
+
             labelView.setTextSize(14);
+
             labelView.setIncludeFontPadding(false);
 
-            // PADDING IZNAD I ISPOD "File Name" labele
-            labelView.setPadding((int) (9 * density), (int) (5 * density), 0, (int) (1 * density));
-            layout.addView(labelView);
+            labelView.setPadding(
+                    (int) (1 * density),
+                    (int) (4 * density),
+                    0,
+                    (int) (4 * density)
+            );
 
-            final EditText input = new EditText(activity);
-            input.setText(suggestedFileName);
+            layout.addView(
+                    labelView
+            );
+
+
+            // ====================================================
+            // INPUT
+            // ====================================================
+
+            final EditText input =
+                    new EditText(activity);
+
+            input.setText(
+                    suggestedFileName
+            );
+
             input.setTextSize(14);
-            input.setTextColor(Color.parseColor("#9E9DA4"));
+
+            input.setTextColor(
+                    Color.parseColor(
+                            MAIN_TEXT_COLOR
+                    )
+            );
+
             input.setSingleLine(true);
-            input.setPadding((int) (8 * density), (int) (10 * density), (int) (8 * density), (int) (10 * density));
-            
-            setCursorColorAndWidth(input, Color.parseColor("#888888"), (int) (1.5f * density));
 
-            GradientDrawable inputBg = new GradientDrawable();
-            inputBg.setColor(Color.parseColor("#1A1A1A"));
-            inputBg.setCornerRadius(10 * density);
-            inputBg.setStroke((int) (0.8f * density), Color.parseColor("#606060"));
-            input.setBackground(inputBg);
+            input.setIncludeFontPadding(false);
 
-            LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+            input.setPadding(
+                    (int) (1 * density),
+                    (int) (5 * density),
+                    (int) (1 * density),
+                    (int) (5 * density)
             );
-            
-            // MARGINA IZNAD I ISPOD INPUT POLJA
-            inputParams.setMargins(0, (int) (4 * density), 0, (int) (16 * density));
-            layout.addView(input, inputParams);
 
-            TextView saveButton = createStyledButton(activity, "Save", "#000000", 13.5f, density);
-            TextView closeButton = createStyledButton(activity, "Close", "#000000", 13.5f, density);
 
-            LinearLayout buttonLayout = new LinearLayout(activity);
-            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-            buttonLayout.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
-            buttonLayout.setPadding(0, 0, 0, 0);
+            // KURSOR
+            setCursorColorAndWidth(
+                    input,
+                    Color.parseColor("#8A8A8C"),
+                    (int) (1.5f * density)
+            );
 
-            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
+
+            // TRANSPARENT INPUT
+            input.setBackgroundColor(
+                    Color.TRANSPARENT
+            );
+
+
+            LinearLayout.LayoutParams inputParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            layout.addView(
+                    input,
+                    inputParams
+            );
+
+
+            // ====================================================
+            // DONJA LINIJA INPUTA
+            // ====================================================
+
+            View inputLine =
+                    new View(activity);
+
+            inputLine.setBackgroundColor(
+                    Color.parseColor(
+                            INPUT_LINE_COLOR
+                    )
+            );
+
+
+            LinearLayout.LayoutParams inputLineParams =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            (int) (1 * density)
+                    );
+
+            inputLineParams.setMargins(
                     0,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            btnParams.weight = 1;
-            btnParams.setMargins(0, 0, (int) (8 * density), 0);
-            saveButton.setLayoutParams(btnParams);
-
-            LinearLayout.LayoutParams closeBtnParams = new LinearLayout.LayoutParams(
                     0,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    0,
+                    (int) (12 * density)
             );
-            closeBtnParams.weight = 1;
-            closeButton.setLayoutParams(closeBtnParams);
 
-            buttonLayout.addView(saveButton);
-            buttonLayout.addView(closeButton);
-
-            // [DOWNLOAD PROZOR - VISINA (DNO)]: Donja margina omotača dugmadi kontroliše razmak od dna
-            // 3. DONJI RAZMAK OD DNA PROZORA DO DUGMIĆI (GDE MOŽEŠ U MINUS)
-            // Preko ovih margina kontrolišeš razmak između input polja/dugmadi i dna prozora.
-            // Donja margina (trenutno 16.5f * density) drži dugmiće od dna. Ovde slobodno stavi minus (npr. -5 * density).
-            LinearLayout.LayoutParams buttonWrapperParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+            layout.addView(
+                    inputLine,
+                    inputLineParams
             );
-            buttonWrapperParams.setMargins(0, (int) (0 * density), 0, (int) (14.5f * density));
-            
-            layout.addView(buttonLayout, buttonWrapperParams);
+
+
+            // ====================================================
+            // SAVE DUGME
+            // ====================================================
+
+            TextView saveButton =
+                    createStyledButton(
+                            activity,
+                            "Save",
+                            BUTTON_TEXT_COLOR,
+                            14f,
+                            density
+                    );
+
+
+            // ====================================================
+            // CLOSE DUGME
+            // ====================================================
+
+            TextView closeButton =
+                    createStyledButton(
+                            activity,
+                            "Close",
+                            BUTTON_TEXT_COLOR,
+                            14f,
+                            density
+                    );
+
+
+            // ====================================================
+            // BUTTON LAYOUT
+            // ====================================================
+
+            LinearLayout buttonLayout =
+                    new LinearLayout(activity);
+
+            buttonLayout.setOrientation(
+                    LinearLayout.HORIZONTAL
+            );
+
+            buttonLayout.setGravity(
+                    Gravity.END | Gravity.CENTER_VERTICAL
+            );
+
+            buttonLayout.setPadding(
+                    0,
+                    0,
+                    0,
+                    (int) (8 * density)
+            );
+
+
+            // SAVE
+            LinearLayout.LayoutParams saveParams =
+                    new LinearLayout.LayoutParams(
+                            0,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            saveParams.weight = 1;
+
+            saveParams.setMargins(
+                    0,
+                    0,
+                    (int) (4 * density),
+                    0
+            );
+
+            saveButton.setLayoutParams(
+                    saveParams
+            );
+
+
+            // CLOSE
+            LinearLayout.LayoutParams closeParams =
+                    new LinearLayout.LayoutParams(
+                            0,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            closeParams.weight = 1;
+
+            closeParams.setMargins(
+                    (int) (4 * density),
+                    0,
+                    0,
+                    0
+            );
+
+            closeButton.setLayoutParams(
+                    closeParams
+            );
+
+
+            buttonLayout.addView(
+                    saveButton
+            );
+
+            buttonLayout.addView(
+                    closeButton
+            );
+
+            layout.addView(
+                    buttonLayout
+            );
+
 
             input.clearFocus();
 
-            // [DOWNLOAD PROZOR - ŠIRINA]: Leva i desna margina kontrolišu širinu prozora
-            int marginHorizontal = (int) (25 * density);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
+
+            // ====================================================
+            // ŠIRINA DIALOGA
+            // ====================================================
+
+            int marginHorizontal =
+                    (int) (
+                            DIALOG_MARGIN_HORIZONTAL_DP
+                                    * density
+                    );
+
+
+            FrameLayout.LayoutParams params =
+                    new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+            params.gravity =
+                    Gravity.CENTER;
+
+            params.leftMargin =
+                    marginHorizontal;
+
+            params.rightMargin =
+                    marginHorizontal;
+
+
+            overlayContainer.addView(
+                    layout,
+                    params
             );
 
-            // POLOZAJ »DOWNLOAD« PROZORA NA EKRANU
 
-            // NA VRHU:
-            //params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            //params.topMargin = (int) (50 * density);
+            ViewGroup rootLayout =
+                    activity.findViewById(
+                            android.R.id.content
+                    );
 
-            // NA DNU:
-            //params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-            //params.bottomMargin = (int) (30 * density);            
 
-            //NA SREDINI:
-            params.gravity = Gravity.CENTER;
+            rootLayout.addView(
+                    overlayContainer,
+                    new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+            );
 
-            // SLOBODNO POMERANJE:
-            //params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            //params.topMargin = (int) (100 * density);
-            
-            params.leftMargin = marginHorizontal;
-            params.rightMargin = marginHorizontal;
 
-            overlayContainer.addView(layout, params);
+            // ====================================================
+            // CLOSE
+            // ====================================================
 
-            ViewGroup rootLayout = activity.findViewById(android.R.id.content);
-            rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            ));
+            closeButton.setOnClickListener(
+                    v -> rootLayout.removeView(
+                            overlayContainer
+                    )
+            );
 
-            closeButton.setOnClickListener(v -> rootLayout.removeView(overlayContainer));
+
+            // ====================================================
+            // SAVE
+            // ====================================================
 
             saveButton.setOnClickListener(v -> {
-                String finalName = input.getText().toString().trim();
+
+                String finalName =
+                        input.getText()
+                                .toString()
+                                .trim();
+
                 if (finalName.isEmpty()) {
-                    finalName = suggestedFileName;
+                    finalName =
+                            suggestedFileName;
                 }
-                callback.onSave(finalName);
-                rootLayout.removeView(overlayContainer);
+
+                callback.onSave(
+                        finalName
+                );
+
+                rootLayout.removeView(
+                        overlayContainer
+                );
             });
         });
     }
 
-    private static TextView createStyledButton(Activity activity, String text, String textColorHex, float textSizeSp, float density) {
-        TextView button = new TextView(activity);
-        button.setText(text);
-        button.setTextColor(Color.parseColor(textColorHex));
-        button.setTextSize(textSizeSp);
-        //button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        button.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-        button.setGravity(Gravity.CENTER);
-        button.setIncludeFontPadding(false);
-        button.getPaint().setSubpixelText(true);
 
-        int btnPad = (int) (10 * density);
-        button.setPadding(btnPad, btnPad, btnPad, btnPad);
+    // ============================================================
+    // STIL DUGMETA
+    // ============================================================
+    //
+    // NORMALNO:
+    //   transparentno
+    //
+    // PRITISNUTO:
+    //   #303033
+    //   zaobljeno
+    //
+    // Ovo je efekat koji se vidi na tvojoj slici.
+    // ============================================================
 
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.parseColor("#CBD868"));
-        bg.setCornerRadius(10 * density);
-        button.setBackground(bg);
+    private static TextView createStyledButton(
+            Activity activity,
+            String text,
+            String textColorHex,
+            float textSizeSp,
+            float density) {
 
-        button.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    v.getBackground().setColorFilter(new LightingColorFilter(Color.WHITE, Color.argb(255, 40, 40, 20)));
-                    v.invalidate();
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    v.getBackground().clearColorFilter();
-                    v.invalidate();
-                    break;
-            }
-            return false;
-        });
+        TextView button =
+                new TextView(activity);
+
+
+        button.setText(
+                text
+        );
+
+        button.setTextColor(
+                Color.parseColor(
+                        textColorHex
+                )
+        );
+
+        button.setTextSize(
+                textSizeSp
+        );
+
+
+        button.setTypeface(
+                Typeface.create(
+                        "sans-serif-medium",
+                        Typeface.NORMAL
+                )
+        );
+
+
+        button.setGravity(
+                Gravity.CENTER
+        );
+
+        button.setIncludeFontPadding(
+                false
+        );
+
+        button.getPaint().setSubpixelText(
+                true
+        );
+
+
+        // ========================================================
+        // NORMALNO STANJE
+        // ========================================================
+
+        button.setBackgroundColor(
+                Color.TRANSPARENT
+        );
+
+
+        // ========================================================
+        // PADDING
+        // ========================================================
+
+        int horizontalPadding =
+                (int) (8 * density);
+
+        int verticalPadding =
+                (int) (10 * density);
+
+        button.setPadding(
+                horizontalPadding,
+                verticalPadding,
+                horizontalPadding,
+                verticalPadding
+        );
+
+
+        // ========================================================
+        // PRESSED EFEKAT
+        // ========================================================
+
+        button.setOnTouchListener(
+                (v, event) -> {
+
+                    switch (event.getAction()) {
+
+                        case MotionEvent.ACTION_DOWN:
+
+                            // ------------------------------------
+                            // Dugme dobija zaobljenu sivu površinu
+                            // ------------------------------------
+
+                            GradientDrawable pressedBackground =
+                                    new GradientDrawable();
+
+                            pressedBackground.setColor(
+                                    Color.parseColor(
+                                            BUTTON_PRESSED_COLOR
+                                    )
+                            );
+
+                            pressedBackground.setCornerRadius(
+                                    32 * density
+                            );
+
+                            v.setBackground(
+                                    pressedBackground
+                            );
+
+                            v.invalidate();
+
+                            break;
+
+
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL:
+
+                            // ------------------------------------
+                            // Vraćanje na potpuno transparentno
+                            // ------------------------------------
+
+                            v.setBackgroundColor(
+                                    Color.TRANSPARENT
+                            );
+
+                            v.invalidate();
+
+                            break;
+                    }
+
+                    // Važno:
+                    // vraćamo false da postojeći click listener
+                    // i dalje normalno radi.
+                    return false;
+                }
+        );
+
 
         return button;
     }
 
-    private static void setCursorColorAndWidth(EditText editText, int color, int widthPx) {
+
+    // ============================================================
+    // CURSOR
+    // ============================================================
+
+    private static void setCursorColorAndWidth(
+            EditText editText,
+            int color,
+            int widthPx) {
+
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ShapeDrawable cursorDrawable = new ShapeDrawable(new RectShape());
-                cursorDrawable.setIntrinsicWidth(widthPx);
-                cursorDrawable.setBounds(0, 0, widthPx, editText.getLineHeight());
-                cursorDrawable.getPaint().setColor(color);
-                editText.setTextCursorDrawable(cursorDrawable);
+
+            if (Build.VERSION.SDK_INT >=
+                    Build.VERSION_CODES.Q) {
+
+                ShapeDrawable cursorDrawable =
+                        new ShapeDrawable(
+                                new RectShape()
+                        );
+
+                cursorDrawable.setIntrinsicWidth(
+                        widthPx
+                );
+
+                cursorDrawable.setBounds(
+                        0,
+                        0,
+                        widthPx,
+                        editText.getLineHeight()
+                );
+
+                cursorDrawable.getPaint()
+                        .setColor(color);
+
+                editText.setTextCursorDrawable(
+                        cursorDrawable
+                );
+
             } else {
-                Field editorField = TextView.class.getDeclaredField("mEditor");
-                editorField.setAccessible(true);
-                Object editor = editorField.get(editText);
-                Field cursorField = editor.getClass().getDeclaredField("mCursorDrawable");
-                cursorField.setAccessible(true);
-                Object drawables = cursorField.get(editor);
-                if (drawables instanceof android.graphics.drawable.Drawable[]) {
-                    GradientDrawable drawable = new GradientDrawable();
-                    drawable.setColor(color);
-                    drawable.setSize(widthPx, editText.getLineHeight());
-                    ((android.graphics.drawable.Drawable[]) drawables)[0] = drawable;
-                    ((android.graphics.drawable.Drawable[]) drawables)[1] = drawable;
+
+                Field editorField =
+                        TextView.class.getDeclaredField(
+                                "mEditor"
+                        );
+
+                editorField.setAccessible(
+                        true
+                );
+
+                Object editor =
+                        editorField.get(
+                                editText
+                        );
+
+
+                Field cursorField =
+                        editor.getClass()
+                                .getDeclaredField(
+                                        "mCursorDrawable"
+                                );
+
+                cursorField.setAccessible(
+                        true
+                );
+
+
+                Object drawables =
+                        cursorField.get(
+                                editor
+                        );
+
+
+                if (drawables instanceof
+                        android.graphics.drawable.Drawable[]) {
+
+                    GradientDrawable drawable =
+                            new GradientDrawable();
+
+                    drawable.setColor(
+                            color
+                    );
+
+                    drawable.setSize(
+                            widthPx,
+                            editText.getLineHeight()
+                    );
+
+
+                    ((android.graphics.drawable.Drawable[])
+                            drawables)[0] =
+                            drawable;
+
+                    ((android.graphics.drawable.Drawable[])
+                            drawables)[1] =
+                            drawable;
                 }
             }
-        } catch (Exception ignored) {}
+
+        } catch (Exception ignored) {
+        }
     }
+
+
+    // ============================================================
+    // CALLBACK
+    // ============================================================
 
     public interface DownloadCallback {
         void onSave(String fileName);
