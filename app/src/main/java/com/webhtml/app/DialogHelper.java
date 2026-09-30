@@ -94,18 +94,6 @@ public class DialogHelper {
 
             overlayContainer.addView(layout, params);
 
-            // ANIMACIJA PROZORA (Sada se postavlja nakon što je pogled dodat u kontejner)
-            layout.setScaleX(0.8f);
-            layout.setScaleY(0.8f);
-            layout.setAlpha(0f);
-            layout.animate()
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .alpha(1.0f)
-                .setDuration(250)
-                .setInterpolator(new android.view.animation.DecelerateInterpolator())
-                .start();
-
             ViewGroup rootLayout = activity.findViewById(android.R.id.content);
             rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -252,18 +240,6 @@ public class DialogHelper {
             params.rightMargin = marginHorizontal;
 
             overlayContainer.addView(layout, params);
-
-            // ANIMACIJA PROZORA (Za download dijalog)
-            layout.setScaleX(0.8f);
-            layout.setScaleY(0.8f);
-            layout.setAlpha(0f);
-            layout.animate()
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .alpha(1.0f)
-                .setDuration(250)
-                .setInterpolator(new android.view.animation.DecelerateInterpolator())
-                .start();
 
             ViewGroup rootLayout = activity.findViewById(android.R.id.content);
             rootLayout.addView(overlayContainer, new ViewGroup.LayoutParams(
