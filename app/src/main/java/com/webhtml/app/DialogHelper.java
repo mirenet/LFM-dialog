@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
+import android.graphics.shapes.RectShape;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -25,26 +25,68 @@ public class DialogHelper {
     // DIALOG STIL
     // ============================================================
 
-    private static final String DIALOG_BACKGROUND = "#1C1C1E";
-    private static final String DIALOG_BORDER = "#2F2F2F";
+    // Glavna boja prozora - tražena boja
+    private static final String DIALOG_BACKGROUND = "#191919";
 
+    // Vrlo suptilan okvir
+    private static final String DIALOG_BORDER = "#353535";
+
+    // Naslov
     private static final String TITLE_COLOR = "#C5C5C5";
+
+    // Glavni tekst
     private static final String MAIN_TEXT_COLOR = "#C5C5C7";
+
+    // Sekundarni tekst
     private static final String SECONDARY_TEXT_COLOR = "#A4A4A6";
 
+    // Linija ispod inputa
     private static final String INPUT_LINE_COLOR = "#303032";
 
-    // Plava boja teksta dugmadi
+    // Plava boja dugmadi
     private static final String BUTTON_TEXT_COLOR = "#7890C5";
 
-    // Boja površine dugmeta kada se pritisne
+    // Pozadina dugmeta kada se pritisne
     private static final String BUTTON_PRESSED_COLOR = "#303033";
 
-    private static final float DIALOG_RADIUS_DP = 10f;
-    private static final float DIALOG_BORDER_DP = 1f;
 
-    // Širina prozora
-    private static final float DIALOG_MARGIN_HORIZONTAL_DP = 26f;
+    // ============================================================
+    // GEOMETRIJA
+    // ============================================================
+
+    /*
+     * Screenshot:
+     *
+     * Ekran:       1080 px
+     * Dialog:      ~890 px
+     *
+     * 890 / 1080 = 0.824
+     *
+     * Zato koristimo približno 82.4% širine ekrana.
+     */
+
+    private static final float DIALOG_WIDTH_RATIO = 0.824f;
+
+    /*
+     * Za uređaj sa density 3:
+     *
+     * ~95 px margina / 3 = ~32 dp
+     *
+     * Ovo mnogo bolje odgovara screenshotu nego prethodnih 26dp.
+     */
+    private static final float DIALOG_MARGIN_HORIZONTAL_DP = 32f;
+
+
+    /*
+     * Na screenshotu su uglovi dosta zaobljeniji.
+     *
+     * 10dp je bilo premalo.
+     *
+     * 14dp daje mnogo bliži izgled.
+     */
+    private static final float DIALOG_RADIUS_DP = 14f;
+
+    private static final float DIALOG_BORDER_DP = 1f;
 
 
     // ============================================================
@@ -59,10 +101,13 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
 
             float density = activity.getResources()
-                    .getDisplayMetrics().density;
+                    .getDisplayMetrics()
+                    .density;
+
 
             final FrameLayout overlayContainer =
                     new FrameLayout(activity);
+
 
             // ZATAMNJENJE POZADINE
             overlayContainer.setBackgroundColor(
@@ -84,6 +129,7 @@ public class DialogHelper {
                     LinearLayout.VERTICAL
             );
 
+
             int padHorizontal =
                     (int) (12 * density);
 
@@ -95,12 +141,17 @@ public class DialogHelper {
             );
 
 
-            // POZADINA + OKVIR
+            // ====================================================
+            // POZADINA I OKVIR
+            // ====================================================
+
             GradientDrawable backgroundDrawable =
                     new GradientDrawable();
 
             backgroundDrawable.setColor(
-                    Color.parseColor(DIALOG_BACKGROUND)
+                    Color.parseColor(
+                            DIALOG_BACKGROUND
+                    )
             );
 
             backgroundDrawable.setCornerRadius(
@@ -109,7 +160,9 @@ public class DialogHelper {
 
             backgroundDrawable.setStroke(
                     (int) (DIALOG_BORDER_DP * density),
-                    Color.parseColor(DIALOG_BORDER)
+                    Color.parseColor(
+                            DIALOG_BORDER
+                    )
             );
 
             layout.setBackground(
@@ -127,7 +180,9 @@ public class DialogHelper {
             titleView.setText("Alert!");
 
             titleView.setTextColor(
-                    Color.parseColor(TITLE_COLOR)
+                    Color.parseColor(
+                            TITLE_COLOR
+                    )
             );
 
             titleView.setTextSize(16);
@@ -143,7 +198,9 @@ public class DialogHelper {
                     Gravity.CENTER
             );
 
-            titleView.setIncludeFontPadding(false);
+            titleView.setIncludeFontPadding(
+                    false
+            );
 
 
             LinearLayout.LayoutParams titleParams =
@@ -159,6 +216,7 @@ public class DialogHelper {
                     (int) (14 * density)
             );
 
+
             layout.addView(
                     titleView,
                     titleParams
@@ -172,10 +230,14 @@ public class DialogHelper {
             TextView messageView =
                     new TextView(activity);
 
-            messageView.setText(message);
+            messageView.setText(
+                    message
+            );
 
             messageView.setTextColor(
-                    Color.parseColor(MAIN_TEXT_COLOR)
+                    Color.parseColor(
+                            MAIN_TEXT_COLOR
+                    )
             );
 
             messageView.setTextSize(14);
@@ -189,7 +251,9 @@ public class DialogHelper {
                     Gravity.START
             );
 
-            messageView.setIncludeFontPadding(false);
+            messageView.setIncludeFontPadding(
+                    false
+            );
 
             messageView.setPadding(
                     (int) (1 * density),
@@ -197,6 +261,7 @@ public class DialogHelper {
                     (int) (1 * density),
                     (int) (8 * density)
             );
+
 
             layout.addView(
                     messageView,
@@ -208,7 +273,7 @@ public class DialogHelper {
 
 
             // ====================================================
-            // CLOSE DUGME
+            // CLOSE
             // ====================================================
 
             TextView closeButton =
@@ -229,7 +294,8 @@ public class DialogHelper {
             );
 
             buttonLayout.setGravity(
-                    Gravity.END | Gravity.CENTER_VERTICAL
+                    Gravity.END |
+                    Gravity.CENTER_VERTICAL
             );
 
             buttonLayout.setPadding(
@@ -240,16 +306,14 @@ public class DialogHelper {
             );
 
 
-            LinearLayout.LayoutParams closeParams =
+            buttonLayout.addView(
+                    closeButton,
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
-                    );
-
-            buttonLayout.addView(
-                    closeButton,
-                    closeParams
+                    )
             );
+
 
             layout.addView(
                     buttonLayout
@@ -257,29 +321,14 @@ public class DialogHelper {
 
 
             // ====================================================
-            // ŠIRINA DIALOGA
+            // DIMENZIJE DIALOGA
             // ====================================================
 
-            int marginHorizontal =
-                    (int) (
-                            DIALOG_MARGIN_HORIZONTAL_DP
-                                    * density
-                    );
-
             FrameLayout.LayoutParams params =
-                    new FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT
+                    createDialogLayoutParams(
+                            activity,
+                            density
                     );
-
-            params.gravity =
-                    Gravity.CENTER;
-
-            params.leftMargin =
-                    marginHorizontal;
-
-            params.rightMargin =
-                    marginHorizontal;
 
 
             overlayContainer.addView(
@@ -292,6 +341,7 @@ public class DialogHelper {
                     activity.findViewById(
                             android.R.id.content
                     );
+
 
             rootLayout.addView(
                     overlayContainer,
@@ -333,14 +383,18 @@ public class DialogHelper {
         activity.runOnUiThread(() -> {
 
             float density = activity.getResources()
-                    .getDisplayMetrics().density;
+                    .getDisplayMetrics()
+                    .density;
 
 
             final FrameLayout overlayContainer =
                     new FrameLayout(activity);
 
+
             overlayContainer.setBackgroundColor(
-                    Color.parseColor("#80000000")
+                    Color.parseColor(
+                            "#80000000"
+                    )
             );
 
             overlayContainer.setClickable(true);
@@ -366,6 +420,7 @@ public class DialogHelper {
             int padHorizontal =
                     (int) (12 * density);
 
+
             layout.setPadding(
                     padHorizontal,
                     0,
@@ -375,24 +430,32 @@ public class DialogHelper {
 
 
             // ====================================================
-            // POZADINA + OKVIR
+            // POZADINA
             // ====================================================
 
             GradientDrawable backgroundDrawable =
                     new GradientDrawable();
 
+
             backgroundDrawable.setColor(
-                    Color.parseColor(DIALOG_BACKGROUND)
+                    Color.parseColor(
+                            "#191919"
+                    )
             );
+
 
             backgroundDrawable.setCornerRadius(
-                    DIALOG_RADIUS_DP * density
+                    14 * density
             );
 
+
             backgroundDrawable.setStroke(
-                    (int) (DIALOG_BORDER_DP * density),
-                    Color.parseColor(DIALOG_BORDER)
+                    (int) (1 * density),
+                    Color.parseColor(
+                            "#353535"
+                    )
             );
+
 
             layout.setBackground(
                     backgroundDrawable
@@ -406,10 +469,14 @@ public class DialogHelper {
             TextView titleView =
                     new TextView(activity);
 
-            titleView.setText("Save File");
+            titleView.setText(
+                    "Save File"
+            );
 
             titleView.setTextColor(
-                    Color.parseColor(TITLE_COLOR)
+                    Color.parseColor(
+                            TITLE_COLOR
+                    )
             );
 
             titleView.setTextSize(16);
@@ -425,7 +492,9 @@ public class DialogHelper {
                     Gravity.CENTER
             );
 
-            titleView.setIncludeFontPadding(false);
+            titleView.setIncludeFontPadding(
+                    false
+            );
 
 
             LinearLayout.LayoutParams titleParams =
@@ -434,12 +503,14 @@ public class DialogHelper {
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     );
 
+
             titleParams.setMargins(
                     0,
                     (int) (16 * density),
                     0,
                     (int) (13 * density)
             );
+
 
             layout.addView(
                     titleView,
@@ -448,13 +519,15 @@ public class DialogHelper {
 
 
             // ====================================================
-            // FILE NAME LABEL
+            // FILE NAME
             // ====================================================
 
             TextView labelView =
                     new TextView(activity);
 
-            labelView.setText("File Name:");
+            labelView.setText(
+                    "File Name:"
+            );
 
             labelView.setTextColor(
                     Color.parseColor(
@@ -464,7 +537,10 @@ public class DialogHelper {
 
             labelView.setTextSize(14);
 
-            labelView.setIncludeFontPadding(false);
+            labelView.setIncludeFontPadding(
+                    false
+            );
+
 
             labelView.setPadding(
                     (int) (1 * density),
@@ -472,6 +548,7 @@ public class DialogHelper {
                     0,
                     (int) (4 * density)
             );
+
 
             layout.addView(
                     labelView
@@ -484,6 +561,7 @@ public class DialogHelper {
 
             final EditText input =
                     new EditText(activity);
+
 
             input.setText(
                     suggestedFileName
@@ -499,7 +577,10 @@ public class DialogHelper {
 
             input.setSingleLine(true);
 
-            input.setIncludeFontPadding(false);
+            input.setIncludeFontPadding(
+                    false
+            );
+
 
             input.setPadding(
                     (int) (1 * density),
@@ -509,15 +590,16 @@ public class DialogHelper {
             );
 
 
-            // KURSOR
+            // CURSOR
             setCursorColorAndWidth(
                     input,
-                    Color.parseColor("#8A8A8C"),
+                    Color.parseColor(
+                            "#8A8A8C"
+                    ),
                     (int) (1.5f * density)
             );
 
 
-            // TRANSPARENT INPUT
             input.setBackgroundColor(
                     Color.TRANSPARENT
             );
@@ -528,6 +610,7 @@ public class DialogHelper {
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     );
+
 
             layout.addView(
                     input,
@@ -542,6 +625,7 @@ public class DialogHelper {
             View inputLine =
                     new View(activity);
 
+
             inputLine.setBackgroundColor(
                     Color.parseColor(
                             INPUT_LINE_COLOR
@@ -555,12 +639,14 @@ public class DialogHelper {
                             (int) (1 * density)
                     );
 
+
             inputLineParams.setMargins(
                     0,
                     0,
                     0,
                     (int) (12 * density)
             );
+
 
             layout.addView(
                     inputLine,
@@ -569,7 +655,7 @@ public class DialogHelper {
 
 
             // ====================================================
-            // SAVE DUGME
+            // DUGME SAVE
             // ====================================================
 
             TextView saveButton =
@@ -583,7 +669,7 @@ public class DialogHelper {
 
 
             // ====================================================
-            // CLOSE DUGME
+            // DUGME CLOSE
             // ====================================================
 
             TextView closeButton =
@@ -608,7 +694,8 @@ public class DialogHelper {
             );
 
             buttonLayout.setGravity(
-                    Gravity.END | Gravity.CENTER_VERTICAL
+                    Gravity.END |
+                    Gravity.CENTER_VERTICAL
             );
 
             buttonLayout.setPadding(
@@ -626,7 +713,9 @@ public class DialogHelper {
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     );
 
+
             saveParams.weight = 1;
+
 
             saveParams.setMargins(
                     0,
@@ -634,6 +723,7 @@ public class DialogHelper {
                     (int) (4 * density),
                     0
             );
+
 
             saveButton.setLayoutParams(
                     saveParams
@@ -647,7 +737,9 @@ public class DialogHelper {
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     );
 
+
             closeParams.weight = 1;
+
 
             closeParams.setMargins(
                     (int) (4 * density),
@@ -655,6 +747,7 @@ public class DialogHelper {
                     0,
                     0
             );
+
 
             closeButton.setLayoutParams(
                     closeParams
@@ -669,6 +762,7 @@ public class DialogHelper {
                     closeButton
             );
 
+
             layout.addView(
                     buttonLayout
             );
@@ -678,30 +772,14 @@ public class DialogHelper {
 
 
             // ====================================================
-            // ŠIRINA DIALOGA
+            // DIMENZIJE DIALOGA
             // ====================================================
 
-            int marginHorizontal =
-                    (int) (
-                            DIALOG_MARGIN_HORIZONTAL_DP
-                                    * density
-                    );
-
-
             FrameLayout.LayoutParams params =
-                    new FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT
+                    createDialogLayoutParams(
+                            activity,
+                            density
                     );
-
-            params.gravity =
-                    Gravity.CENTER;
-
-            params.leftMargin =
-                    marginHorizontal;
-
-            params.rightMargin =
-                    marginHorizontal;
 
 
             overlayContainer.addView(
@@ -747,14 +825,17 @@ public class DialogHelper {
                                 .toString()
                                 .trim();
 
+
                 if (finalName.isEmpty()) {
                     finalName =
                             suggestedFileName;
                 }
 
+
                 callback.onSave(
                         finalName
                 );
+
 
                 rootLayout.removeView(
                         overlayContainer
@@ -765,17 +846,54 @@ public class DialogHelper {
 
 
     // ============================================================
-    // STIL DUGMETA
+    // DIMENZIJE DIALOGA
     // ============================================================
-    //
-    // NORMALNO:
-    //   transparentno
-    //
-    // PRITISNUTO:
-    //   #303033
-    //   zaobljeno
-    //
-    // Ovo je efekat koji se vidi na tvojoj slici.
+
+    private static FrameLayout.LayoutParams createDialogLayoutParams(
+            Activity activity,
+            float density) {
+
+        /*
+         * Koristimo stvarnu širinu ekrana.
+         *
+         * Screenshot:
+         *
+         * 1080 px ekran
+         * ~890 px dialog
+         *
+         * = 82.4%
+         */
+
+        int screenWidth =
+                activity.getResources()
+                        .getDisplayMetrics()
+                        .widthPixels;
+
+
+        int dialogWidth =
+                (int) (
+                        screenWidth *
+                        DIALOG_WIDTH_RATIO
+                );
+
+
+        FrameLayout.LayoutParams params =
+                new FrameLayout.LayoutParams(
+                        dialogWidth,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                );
+
+
+        params.gravity =
+                Gravity.CENTER;
+
+
+        return params;
+    }
+
+
+    // ============================================================
+    // DUGME
     // ============================================================
 
     private static TextView createStyledButton(
@@ -793,11 +911,13 @@ public class DialogHelper {
                 text
         );
 
+
         button.setTextColor(
                 Color.parseColor(
                         textColorHex
                 )
         );
+
 
         button.setTextSize(
                 textSizeSp
@@ -816,13 +936,14 @@ public class DialogHelper {
                 Gravity.CENTER
         );
 
+
         button.setIncludeFontPadding(
                 false
         );
 
-        button.getPaint().setSubpixelText(
-                true
-        );
+
+        button.getPaint()
+                .setSubpixelText(true);
 
 
         // ========================================================
@@ -844,6 +965,7 @@ public class DialogHelper {
         int verticalPadding =
                 (int) (10 * density);
 
+
         button.setPadding(
                 horizontalPadding,
                 verticalPadding,
@@ -863,12 +985,17 @@ public class DialogHelper {
 
                         case MotionEvent.ACTION_DOWN:
 
-                            // ------------------------------------
-                            // Dugme dobija zaobljenu sivu površinu
-                            // ------------------------------------
+                            /*
+                             * Baš kao na screenshot-u:
+                             *
+                             * - tamno siva površina
+                             * - jako zaobljena
+                             * - samo oko samog dugmeta
+                             */
 
                             GradientDrawable pressedBackground =
                                     new GradientDrawable();
+
 
                             pressedBackground.setColor(
                                     Color.parseColor(
@@ -876,13 +1003,16 @@ public class DialogHelper {
                                     )
                             );
 
+
                             pressedBackground.setCornerRadius(
                                     32 * density
                             );
 
+
                             v.setBackground(
                                     pressedBackground
                             );
+
 
                             v.invalidate();
 
@@ -890,24 +1020,21 @@ public class DialogHelper {
 
 
                         case MotionEvent.ACTION_UP:
-                        case MotionEvent.ACTION_CANCEL:
 
-                            // ------------------------------------
-                            // Vraćanje na potpuno transparentno
-                            // ------------------------------------
+                        case MotionEvent.ACTION_CANCEL:
 
                             v.setBackgroundColor(
                                     Color.TRANSPARENT
                             );
+
 
                             v.invalidate();
 
                             break;
                     }
 
-                    // Važno:
-                    // vraćamo false da postojeći click listener
-                    // i dalje normalno radi.
+
+                    // Ne blokira postojeći click listener
                     return false;
                 }
         );
@@ -936,9 +1063,11 @@ public class DialogHelper {
                                 new RectShape()
                         );
 
+
                 cursorDrawable.setIntrinsicWidth(
                         widthPx
                 );
+
 
                 cursorDrawable.setBounds(
                         0,
@@ -947,8 +1076,10 @@ public class DialogHelper {
                         editText.getLineHeight()
                 );
 
+
                 cursorDrawable.getPaint()
                         .setColor(color);
+
 
                 editText.setTextCursorDrawable(
                         cursorDrawable
@@ -961,9 +1092,11 @@ public class DialogHelper {
                                 "mEditor"
                         );
 
+
                 editorField.setAccessible(
                         true
                 );
+
 
                 Object editor =
                         editorField.get(
@@ -976,6 +1109,7 @@ public class DialogHelper {
                                 .getDeclaredField(
                                         "mCursorDrawable"
                                 );
+
 
                 cursorField.setAccessible(
                         true
@@ -994,9 +1128,11 @@ public class DialogHelper {
                     GradientDrawable drawable =
                             new GradientDrawable();
 
+
                     drawable.setColor(
                             color
                     );
+
 
                     drawable.setSize(
                             widthPx,
@@ -1007,6 +1143,7 @@ public class DialogHelper {
                     ((android.graphics.drawable.Drawable[])
                             drawables)[0] =
                             drawable;
+
 
                     ((android.graphics.drawable.Drawable[])
                             drawables)[1] =
@@ -1024,6 +1161,9 @@ public class DialogHelper {
     // ============================================================
 
     public interface DownloadCallback {
-        void onSave(String fileName);
+
+        void onSave(
+                String fileName
+        );
     }
 }
