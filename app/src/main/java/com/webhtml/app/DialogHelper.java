@@ -92,6 +92,21 @@ public class DialogHelper {
             params.leftMargin = marginHorizontal;
             params.rightMargin = marginHorizontal;
 
+            // ANIMACIJA PROZORA..
+            // 1. Postavimo početno stanje za animaciju (da bude malo manji i nevidljiv)
+            layout.setScaleX(0.8f);
+            layout.setScaleY(0.8f);
+            layout.setAlpha(0f);
+
+            // 2. Pokrenemo animaciju ka normalnoj veličini i vidljivosti
+            layout.animate()
+            .scaleX(1.0f)
+            .scaleY(1.0f)
+            .alpha(1.0f)
+            .setDuration(300) // Trajanje u milisekundama (možeš po želji na 200-300)
+            .setInterpolator(new android.view.animation.DecelerateInterpolator()) // Ubrzava na početku, usporava na kraju (prirodan efekat)
+            .start();
+            
             overlayContainer.addView(layout, params);
 
             ViewGroup rootLayout = activity.findViewById(android.R.id.content);
