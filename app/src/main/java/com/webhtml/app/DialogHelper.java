@@ -33,7 +33,7 @@ public class DialogHelper {
             // #00000000 - providno; #40000000 - blago 25%; 
             // #80000000 - srednje 50%; #C0000000 - jako 75%;
             // #FF000000 - potpuno crno 100%;
-            overlayContainer.setBackgroundColor(Color.parseColor("#C0000000"));
+            overlayContainer.setBackgroundColor(Color.parseColor("#80000000"));
             overlayContainer.setClickable(true);
             overlayContainer.setFocusable(true);
 
@@ -230,7 +230,7 @@ public class DialogHelper {
             input.clearFocus();
 
             // [DOWNLOAD PROZOR - ŠIRINA]: Leva i desna margina kontrolišu širinu prozora
-            int marginHorizontal = (int) (50 * density);
+            int marginHorizontal = (int) (25 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
