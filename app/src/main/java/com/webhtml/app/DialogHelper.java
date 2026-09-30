@@ -35,6 +35,7 @@ public class DialogHelper {
             LinearLayout layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
 
+            // [ALERT PROZOR - VISINA]: Unutrašnji padding celog prozora utiče na visinu
             int padAll = (int) (12 * density);
             layout.setPadding(padAll, padAll, padAll, padAll);
 
@@ -76,6 +77,7 @@ public class DialogHelper {
             buttonLayout.addView(closeButton, btnParams);
             layout.addView(buttonLayout);
 
+            // [ALERT PROZOR - ŠIRINA]: Leva i desna margina kontrolišu širinu prozora
             int marginHorizontal = (int) (50 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
@@ -136,6 +138,7 @@ public class DialogHelper {
             titleView.setGravity(Gravity.CENTER);
             titleView.setIncludeFontPadding(false);
 
+            // [DOWNLOAD PROZOR - VISINA (VRH)]: Gornja margina kontroliše razmak od vrha
             // 2. GORNJI RAZMAK OD VRHA PROZORA (GDE MOŽEŠ U MINUS)
             // Ovde koristiš LayoutParams umesto običnog padding-a. 
             // Gornja margina (trenutno 16.5f * density) drži naslov. Možeš je smanjiti ili staviti u minus (npr. -5 * density).
@@ -207,6 +210,7 @@ public class DialogHelper {
             buttonLayout.addView(saveButton);
             buttonLayout.addView(closeButton);
 
+            // [DOWNLOAD PROZOR - VISINA (DNO)]: Donja margina omotača dugmadi kontroliše razmak od dna
             // 3. DONJI RAZMAK OD DNA PROZORA DO DUGMIĆI (GDE MOŽEŠ U MINUS)
             // Preko ovih margina kontrolišeš razmak između input polja/dugmadi i dna prozora.
             // Donja margina (trenutno 16.5f * density) drži dugmiće od dna. Ovde slobodno stavi minus (npr. -5 * density).
@@ -220,7 +224,8 @@ public class DialogHelper {
 
             input.clearFocus();
 
-            int marginHorizontal = (int) (25 * density);
+            // [DOWNLOAD PROZOR - ŠIRINA]: Leva i desna margina kontrolišu širinu prozora
+            int marginHorizontal = (int) (50 * density);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
