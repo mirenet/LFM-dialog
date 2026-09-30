@@ -235,7 +235,25 @@ public class DialogHelper {
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
             );
-            params.gravity = Gravity.CENTER;
+
+            // POLOZAJ »DOWNLOAD« PROZORA NA EKRANU
+
+            // NA VRHU:
+            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            params.topMargin = (int) (50 * density);
+
+            // NA DNU:
+            //params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            //params.bottomMargin = (int) (30 * density);            
+
+            //NA SREDINI:
+            //params.gravity = Gravity.CENTER;
+
+
+            // SLOBODNO POMERANJE:
+            //params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            //params.topMargin = (int) (100 * density);
+            
             params.leftMargin = marginHorizontal;
             params.rightMargin = marginHorizontal;
 
