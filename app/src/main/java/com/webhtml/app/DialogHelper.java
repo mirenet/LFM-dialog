@@ -255,8 +255,8 @@ public class DialogHelper {
         button.setText(text);
         button.setTextColor(Color.parseColor(textColorHex));
         button.setTextSize(textSizeSp);
-       // button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        button.setTypeface(Typeface.create("sans-serif", 500, false));
+        //button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        button.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         button.setGravity(Gravity.CENTER);
         button.setIncludeFontPadding(false);
         button.getPaint().setSubpixelText(true);
