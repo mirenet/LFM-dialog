@@ -62,28 +62,17 @@ public class DialogHelper {
             titleView.setLayoutParams(titleParams);
             layout.addView(titleView);
 
-            // ScrollView sa bezbednim onMeasure ograničenjem (bez weight-a, sprečava nestajanje)
-            ScrollView scrollView = new ScrollView(activity) {
-                @Override
-                protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                    View root = activity.findViewById(android.R.id.content);
-                    int rootHeight = (root != null && root.getHeight() > 0) 
-                            ? root.getHeight() 
-                            : activity.getResources().getDisplayMetrics().heightPixels;
-                    
-                    // Ograničavamo maksimalnu visinu na 55% trenutnog prozora
-                    int maxHeight = (int) (rootHeight * 0.55);
-                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);
-                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-                }
-            };
+            // ScrollView za tekst - Android samostalno upravlja visinom i fleksibilnošću
+            ScrollView scrollView = new ScrollView(activity);
             scrollView.setVerticalScrollBarEnabled(true);
             scrollView.setScrollbarFadingEnabled(true);
             
-            // Koristimo WRAP_CONTENT umesto weight-a da izbegnemo bagove u split-screen/popup animacijama
+            // Korišćenje weight=1 u kombinaciji sa visinom 0 omogućava da ScrollView uzme samo onoliko 
+            // prostora koliko mu treba, ali da se automatski skupi ako ponestane mesta na ekranu
             LinearLayout.LayoutParams scrollParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    0,
+                    1.0f 
             );
             scrollView.setLayoutParams(scrollParams);
 
@@ -120,7 +109,7 @@ public class DialogHelper {
             buttonLayout.setLayoutParams(buttonLayoutParams);
             layout.addView(buttonLayout);
 
-            // Celokupan dijalog koristi WRAP_CONTENT i bezbedne margine
+            // Dinamička širina i visina preko WRAP_CONTENT-a sa bezbednim marginama
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
