@@ -413,4 +413,17 @@ public class MainActivity extends AppCompatActivity {
             uploadMessage = null;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        if (webView != null) {
+            if (webView.getParent() instanceof android.view.ViewGroup) {
+                ((android.view.ViewGroup) webView.getParent()).removeView(webView);
+            }
+            webView.removeAllViews();
+            webView.destroy();
+            webView = null;
+        }
+        super.onDestroy();
+    }
 }
