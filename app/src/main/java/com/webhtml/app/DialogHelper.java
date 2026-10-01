@@ -196,14 +196,15 @@ public class DialogHelper {
             inputParams.setMargins((int) (5 * density), 0, (int) (5 * density), 0);
             layout.addView(input, inputParams);
 
+            // AŽURIRANA LINIJA PREMA TVOJIM PARAMETRIMA (width: 98%, height: 1.3px, boja: #393939, margin-left: 4px)
             View lineView = new View(activity);
             LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    (int) (1 * density)
+                    (int) (0.98 * layout.getMeasuredWidth()), // prati ~98% širine
+                    (int) (1.3 * density)
             );
-            lineParams.setMargins((int) (5 * density), (int) (5 * density), (int) (5 * density), 0);
+            lineParams.setMargins((int) (4 * density), (int) (1 * density), (int) (4 * density), 0);
             lineView.setLayoutParams(lineParams);
-            lineView.setBackgroundColor(Color.parseColor("#272729"));
+            lineView.setBackgroundColor(Color.parseColor("#393939"));
             layout.addView(lineView);
 
             TextView saveButton = createStyledButton(activity, "OK", density);
