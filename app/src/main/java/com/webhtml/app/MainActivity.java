@@ -29,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private ValueCallback<Uri[]> uploadMessage;
     private final static int FILE_CHOOSER_RESULT_CODE = 1;
-    private DownloadHelper downloadHelper;
+    
+    // [PRIVREMENO ISKLJUČENO]: privremeno sakriveno radi testiranja
+    // private DownloadHelper downloadHelper;
 
     // Kodovi i promenljive za sistemske dozvole u hodu
     private final static int LOCATION_PERMISSION_REQUEST_CODE = 100;
@@ -51,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         webView.setBackgroundColor(Color.parseColor("#070707"));
         setContentView(webView);
 
-        // Inicijalizujemo DownloadHelper
-        downloadHelper = new DownloadHelper(this);
+        // [PRIVREMENO ISKLJUČENO]: Inicijalizujemo DownloadHelper
+        // downloadHelper = new DownloadHelper(this);
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -71,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
-        // Registrujemo DownloadHelper kao JavaScript Bridge
-        webView.addJavascriptInterface(downloadHelper, "AndroidBridge");
+        // [PRIVREMENO ISKLJUČENO]: Registrujemo DownloadHelper kao JavaScript Bridge
+        // webView.addJavascriptInterface(downloadHelper, "AndroidBridge");
 
         // Moderno upravljanje dugmetom nazad (OnBackPressedDispatcher)
         getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
@@ -87,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // [PRIVREMENO ISKLJUČENO]: Download listener privremeno isključen
+        /*
         webView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             String rawSuggestedName = android.webkit.URLUtil.guessFileName(url, contentDisposition, mimetype);
             String extension = "txt";
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         });
+        */
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -258,8 +263,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                DialogHelper.showCustomAlert(MainActivity.this, message, result);
+                // [PRIVREMENO ISKLJUČENO]: Umesto DialogHelper-a vraćamo standardni alert ili ga ignorišemo da ne pukne
+                result.confirm(); 
                 return true;
+                // Originalno: DialogHelper.showCustomAlert(MainActivity.this, message, result); return true;
             }
 
             // Standardno sistemsko traženje geolokacije
