@@ -204,7 +204,7 @@ public class DialogHelper {
             );
             lineParams.setMargins((int) (4 * density), (int) (1 * density), (int) (5 * density), 0);
             lineView.setLayoutParams(lineParams);
-            lineView.setBackgroundColor(Color.parseColor("#272729"));
+            lineView.setBackgroundColor(Color.parseColor("#888888"));
             layout.addView(lineView);
 
             TextView saveButton = createStyledButton(activity, "OK", density);
